@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Eye, X } from "lucide-react";
+import API_URL from "../../../utils/constants";
 
 const ViewCommentModal = ({ user, bookingData }) => {
   const [showModal, setShowModal] = useState(false);
@@ -55,7 +56,7 @@ const ViewCommentModal = ({ user, bookingData }) => {
               {bookingData.fld_booking_call_file && (
                 <video width="100%" height="240" controls className="mb-4">
                   <source
-                    src={`https://callback-4kg4.onrender.com/assets/upload_doc/${bookingData.fld_booking_call_file}`}
+                    src={`${API_URL}/assets/upload_doc/${bookingData.fld_booking_call_file}`}
                     type="video/mp4"
                   />
                   Your browser does not support the video tag.

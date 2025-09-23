@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import $ from "jquery";
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import { toast } from "react-hot-toast";
-import $ from "jquery";
 import { PlusIcon, X, XIcon } from "lucide-react";
 import Select from "react-select";
 import SkeletonLoader from "../components/SkeletonLoader";
+import API_URL from "../utils/constants";
 
 DataTable.use(DT);
 
@@ -22,7 +23,7 @@ export default function Completedcallratings() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/completedcallratings/getAllCompletedcallratings"
+        `${API_URL}/api/completedcallratings/getAllCompletedcallratings`
       );
       const result = await response.json();
       

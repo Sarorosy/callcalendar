@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../assets/images/callcalendar-logo.png';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../utils/idb';
-
+import API_URL from '../utils/constants';
 function Login() {
   const [username, setUsername] = useState('');
   const [userpass, setUserpass] = useState('');
@@ -18,7 +18,7 @@ function Login() {
 
     try {
       setSubmitting(true);
-      const response = await fetch('https://callback-4kg4.onrender.com/api/users/login', {
+      const response = await fetch(`${API_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, userpass }),
@@ -34,6 +34,7 @@ function Login() {
         setErrorMsg(result.message || 'Invalid credentials');
       }
     } catch (error) {
+      console
       toast.error('Unable to connect to server');
     }finally{
       setSubmitting(false);

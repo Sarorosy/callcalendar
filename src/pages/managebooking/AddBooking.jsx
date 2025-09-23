@@ -12,6 +12,7 @@ import { useAuth } from "../../utils/idb";
 import { callRegardingOptions, toastWarning } from "../../helpers/CommonHelper";
 import { useNavigate } from "react-router-dom";
 import SocketHandler from "../../hooks/SocketHandler";
+import API_URL from "../../utils/constants";
 
 export default function AddBooking({
   user,
@@ -102,7 +103,7 @@ export default function AddBooking({
         try {
           setPageLoading(true);
           const response = await fetch(
-            "https://callback-4kg4.onrender.com/api/additional/callrequestrc",
+            `${API_URL}/api/additional/callrequestrc`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -216,7 +217,7 @@ export default function AddBooking({
       if (formData.sale_type === "Presales" && clientId.length > 3) {
         try {
           const res = await fetch(
-            `https://callback-4kg4.onrender.com/api/bookings/getPresaleClientDetails/${clientId}`
+            `${API_URL}/api/bookings/getPresaleClientDetails/${clientId}`
           );
           const data = await res.json();
 
@@ -236,7 +237,7 @@ export default function AddBooking({
             }));
 
             const recordingRes = await fetch(
-              `https://callback-4kg4.onrender.com/api/bookings/checkCallrecording`,
+              `${API_URL}/api/bookings/checkCallrecording`,
               {
                 method: "POST",
                 headers: {
@@ -315,7 +316,7 @@ export default function AddBooking({
             setProjects(data.data.projects || []);
 
             const recordingRes = await fetch(
-              `https://callback-4kg4.onrender.com/api/bookings/checkCallrecording`,
+              `${API_URL}/api/bookings/checkCallrecording`,
               {
                 method: "POST",
                 headers: {
@@ -367,7 +368,7 @@ export default function AddBooking({
   const checkConsultantWebsiteCondition = (consultantId, consultantName) => {
     try {
       fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/checkConsultantWebsiteCondition`,
+        `${API_URL}/api/bookings/checkConsultantWebsiteCondition`,
         {
           method: "POST",
           headers: {
@@ -408,7 +409,7 @@ export default function AddBooking({
 
   const checkConsultantTeamCondition = (consultantId, consultantName) => {
     try {
-      fetch(`https://callback-4kg4.onrender.com/api/bookings/checkConsultantTeamCondition`, {
+      fetch(`${API_URL}/api/bookings/checkConsultantTeamCondition`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -455,7 +456,7 @@ export default function AddBooking({
   };
 
   const checkPresalesCall = (consultantId, consultantName) => {
-    fetch("https://callback-4kg4.onrender.com/api/bookings/checkPresalesCall", {
+    fetch(`${API_URL}/api/bookings/checkPresalesCall`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -540,7 +541,7 @@ export default function AddBooking({
 
     try {
       const res = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getConsultantsBySubjectArea",
+        `${API_URL}/api/helpers/getConsultantsBySubjectArea`,
         {
           method: "POST",
           headers: {
@@ -567,7 +568,7 @@ export default function AddBooking({
     // const allowedCalls=formData.allowedCalls;
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/checkPostsaleCompletedCalls`,
+        `${API_URL}/api/bookings/checkPostsaleCompletedCalls`,
         {
           method: "POST",
           headers: {
@@ -727,7 +728,7 @@ export default function AddBooking({
 
     try {
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/addBooking",
+        `${API_URL}/api/bookings/addBooking`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

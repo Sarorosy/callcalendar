@@ -1,6 +1,8 @@
+import API_URL from "../utils/constants";
+
 export const fetchAllConsultants = async () => {
   try {
-    const response = await fetch("https://callback-4kg4.onrender.com/api/helpers/getAllActiveConsultants");
+    const response = await fetch(`${API_URL}/api/helpers/getAllActiveConsultants`);
     if (!response.ok) throw new Error("Failed to fetch consultants");
     return await response.json();
   } catch (error) {
@@ -11,7 +13,7 @@ export const fetchAllConsultants = async () => {
 
 export const fetchAllSubjectAreas = async () => {
   try {
-    const response = await fetch("https://callback-4kg4.onrender.com/api/helpers/getAllSubjectAreas");
+    const response = await fetch(`${API_URL}/api/helpers/getAllSubjectAreas`);
     if (!response.ok) throw new Error("Failed to fetch subject areas");
     return await response.json();
   } catch (error) {
@@ -22,7 +24,7 @@ export const fetchAllSubjectAreas = async () => {
 
 export const fetchPlanDetails = async () => {
   try {
-    const response = await fetch("https://callback-4kg4.onrender.com/api/helpers/getPlanDetails");
+    const response = await fetch(`${API_URL}/api/helpers/getPlanDetails`);
     if (!response.ok) throw new Error("Failed to fetch plan details");
     return await response.json();
   } catch (error) {
@@ -33,7 +35,7 @@ export const fetchPlanDetails = async () => {
 
 export const fetchFollowerData = async (filterData) => {
   try {
-    const response = await fetch('https://callback-4kg4.onrender.com/api/helpers/fetchFollowerData', {
+    const response = await fetch(`${API_URL}/api/helpers/fetchFollowerData`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

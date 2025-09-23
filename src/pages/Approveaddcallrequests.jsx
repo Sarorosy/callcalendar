@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import $ from "jquery";
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import { toast } from "react-hot-toast";
-import $ from "jquery";
 import { PlusIcon, X, XIcon } from "lucide-react";
 import Select from "react-select";
 import SkeletonLoader from "../components/SkeletonLoader";
 import { useAuth } from "../utils/idb";
 import { getSocket } from "../utils/Socket";
 import { formatDate } from "../helpers/CommonHelper";
+import API_URL from "../utils/constants";
 
 DataTable.use(DT);
 
@@ -76,7 +77,7 @@ useEffect(() => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/approveaddcallrequests/getAllApproveaddcallrequests"
+        `${API_URL}/api/approveaddcallrequests/getAllApproveaddcallrequests`
       );
       const result = await response.json();
       
@@ -96,7 +97,7 @@ useEffect(() => {
   const updateApproveaddcallrequestStatus = async (approveData, approveaddcallrequestId, status) => {
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/approveaddcallrequests/update-approveaddcallrequest-status/${approveaddcallrequestId}`,
+        `${API_URL}/api/approveaddcallrequests/update-approveaddcallrequest-status/${approveaddcallrequestId}`,
         {
           method: "PUT",
           headers: {

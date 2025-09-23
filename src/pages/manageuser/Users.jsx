@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
+import $ from "jquery";
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
-import $ from "jquery";
 import { useAuth } from "../../utils/idb.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
@@ -12,6 +12,7 @@ import SkeletonLoader from "../../components/SkeletonLoader.jsx";
 import { PlusIcon } from "lucide-react";
 import { getSocket } from "../../utils/Socket.jsx";
 import SocketHandler from "../../hooks/SocketHandler.jsx";
+import API_URL from "../../utils/constants.jsx";
 
 export default function Users() {
   const { user, logout,setUserArray } = useAuth();
@@ -105,7 +106,7 @@ export default function Users() {
       };
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/users/getallusers",
+        `${API_URL}/api/users/getallusers`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -130,7 +131,7 @@ export default function Users() {
   const getAllTeams = async () => {
     try {
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getAllActiveTeams",
+        `${API_URL}/api/helpers/getAllActiveTeams`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -190,7 +191,7 @@ export default function Users() {
 
     try {
       setIsSubmitting(true);
-      const response = await fetch("https://callback-4kg4.onrender.com/api/users/addUser", {
+      const response = await fetch(`${API_URL}/api/users/addUser`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -217,7 +218,7 @@ export default function Users() {
   const getUserCount = async () => {
     try {
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/users/getusercount",
+        `${API_URL}/api/users/getusercount`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -238,7 +239,7 @@ export default function Users() {
   const updateUserStatus = async (userId, status) => {
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/users/update-status/${userId}`,
+        `${API_URL}/api/users/update-status/${userId}`,
         {
           method: "PUT",
           headers: {
@@ -263,7 +264,7 @@ export default function Users() {
   const updateUserAttendance = async (userId, attendance) => {
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/users/updateAttendance/${userId}`,
+        `${API_URL}/api/users/updateAttendance/${userId}`,
         {
           method: "PUT",
           headers: {

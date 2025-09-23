@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Calendar, Clock, Save, CheckSquare, Square } from "lucide-react";
+import API_URL from "../../utils/constants";
 
 const dayMap = {
   1: "sun",
@@ -25,7 +26,7 @@ const BlockSlot = ({ user }) => {
     const fetchConsultantSettingData = async () => {
       try {
         const response = await fetch(
-          "https://callback-4kg4.onrender.com/api/dashboard/getconsultantsettings",
+          `${API_URL}/api/dashboard/getconsultantsettings`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -141,7 +142,7 @@ const BlockSlot = ({ user }) => {
       setSubmitting(true);
       // Format like "3:30 PM - 4:30 PM - 5:30 PM"
       const blockedSlotsString = selectedSlots.join(" - ");
-      const response = await fetch("https://callback-4kg4.onrender.com/api/dashboard/updateBlockSlots", {
+      const response = await fetch(`${API_URL}/api/dashboard/updateBlockSlots`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -241,7 +242,7 @@ const BlockSlot = ({ user }) => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
             {/* Day Selector */}
             <div className="bg-white p-4 rounded shadow-md border border-gray-200">
-              <h4 class="text-base font-semibold mb-3 border-b border-gray-100 pb-2 flex gap-2 items-center"><Calendar size={16} className="text-blue-600" /> Select Day :</h4>
+              <h4 className="text-base font-semibold mb-3 border-b border-gray-100 pb-2 flex gap-2 items-center"><Calendar size={16} className="text-blue-600" /> Select Day :</h4>
               
               {renderTimeOption("Sunday", consultSettingData?.fld_sun_time_data, 1, "sun_bx")}
               {renderTimeOption("Monday", consultSettingData?.fld_mon_time_data, 2, "mon_bx")}

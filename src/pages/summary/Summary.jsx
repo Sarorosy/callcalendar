@@ -12,6 +12,7 @@ import moment from "moment-timezone";
 import { RefreshCcw } from "lucide-react";
 import SocketHandler from "../../hooks/SocketHandler";
 import { getSocket } from "../../utils/Socket";
+import API_URL from "../../utils/constants";
 // import ViewAllTable from "./ViewAllTable";
 
 
@@ -222,7 +223,7 @@ useEffect(() => {
     try {
       // Fetch consultants first
       const consultantRes = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getUsersByRole",
+        `${API_URL}/api/helpers/getUsersByRole`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -233,7 +234,7 @@ useEffect(() => {
 
       // Then fetch CRMs
       const crmRes = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getUsersByRole",
+        `${API_URL}/api/helpers/getUsersByRole`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -256,7 +257,7 @@ useEffect(() => {
 
     try {
       const res = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getUsersByRole",
+        `${API_URL}/api/helpers/getUsersByRole`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -312,7 +313,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/fetchSummaryBookings`,
+        `${API_URL}/api/bookings/fetchSummaryBookings`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -1,5 +1,6 @@
 // socket.jsx
 import { io } from "socket.io-client";
+import API_URL from "./constants";
 
 let socket;
 let currentUserId = null;
@@ -7,7 +8,7 @@ let currentUserId = null;
 // Initialize or return existing socket
 export const initSocket = (userId) => {
   if (!socket) {
-    socket = io("https://callback-4kg4.onrender.com", {
+    socket = io(`${API_URL}`, {
       reconnection: true,
       reconnectionAttempts: 3,
       reconnectionDelay: 3000,
@@ -43,7 +44,7 @@ export const initSocket = (userId) => {
 export const getSocket = () => {
   if (!socket) {
     // initialize socket without userId - you can later emit registerUser separately
-    socket = io("https://callback-4kg4.onrender.com");
+    socket = io("${API_URL}");
   }
   return socket;
 };

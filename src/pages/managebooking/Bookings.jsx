@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
+import $ from "jquery";
 import DataTable from "datatables.net-react";
 import ReactDOMServer from "react-dom/server";
 import DT from "datatables.net-dt";
-import $ from "jquery";
 import { useAuth } from "../../utils/idb.jsx";
 import {
   ChevronDown,
@@ -31,6 +31,7 @@ import moment from "moment/moment.js";
 import EditSubjectArea from "./EditSubjectArea.jsx";
 import SocketHandler from "../../hooks/SocketHandler.jsx";
 import { getSocket } from "../../utils/Socket.jsx";
+import API_URL from "../../utils/constants.jsx";
 
 export default function Bookings() {
   const { user } = useAuth();
@@ -201,7 +202,7 @@ export default function Bookings() {
     try {
       // Fetch consultants first
       const consultantRes = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getUsersByRole",
+        `${API_URL}/api/helpers/getUsersByRole`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -212,7 +213,7 @@ export default function Bookings() {
 
       // Then fetch CRMs
       const crmRes = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getUsersByRole",
+        `${API_URL}/api/helpers/getUsersByRole`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -235,7 +236,7 @@ export default function Bookings() {
 
     try {
       const res = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getUsersByRole",
+        `${API_URL}/api/helpers/getUsersByRole`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -280,7 +281,7 @@ export default function Bookings() {
       };
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/fetchBooking",
+        `${API_URL}/api/bookings/fetchBooking`,
         {
           method: "POST",
           headers: {
@@ -381,7 +382,7 @@ export default function Bookings() {
       };
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/fetchBooking",
+        `${API_URL}/api/bookings/fetchBooking`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -423,7 +424,7 @@ export default function Bookings() {
 
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/history/${bookingId}`
+        `${API_URL}/api/bookings/history/${bookingId}`
       );
       const result = await res.json();
 
@@ -503,7 +504,7 @@ export default function Bookings() {
     setLoadingTeamBookings(true);
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/getConsultantTeamBookings?userId=${user.id}`
+        `${API_URL}/api/bookings/getConsultantTeamBookings?userId=${user.id}`
       );
       const data = await response.json();
       if (response.ok) {
@@ -528,7 +529,7 @@ export default function Bookings() {
 
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/updateStatusByCrm`,
+        `${API_URL}/api/bookings/updateStatusByCrm`,
         {
           method: "POST",
           headers: {

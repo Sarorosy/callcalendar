@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import $ from "jquery";
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import { toast } from "react-hot-toast";
-import $ from "jquery";
 import { PlusIcon, X, XIcon } from "lucide-react";
 import Select from "react-select";
 import SkeletonLoader from "../components/SkeletonLoader";
 import { getSocket } from "../utils/Socket";
 import { useAuth } from "../utils/idb";
 import { formatDate } from "../helpers/CommonHelper";
+import API_URL from "../utils/constants";
 
 DataTable.use(DT);
 
@@ -92,7 +93,7 @@ export default function Teams() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getAllTeams"
+        `${API_URL}/api/helpers/getAllTeams`
       );
       const result = await response.json();
       if (result.status) {
@@ -111,7 +112,7 @@ export default function Teams() {
   const updateTeamStatus = async (teamId, status) => {
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/helpers/update-team-status/${teamId}`,
+        `${API_URL}/api/helpers/update-team-status/${teamId}`,
         {
           method: "PUT",
           headers: {
@@ -142,7 +143,7 @@ export default function Teams() {
 
     try {
       const method = "POST";
-      const url = "https://callback-4kg4.onrender.com/api/helpers/addTeam";
+      const url = `${API_URL}/api/helpers/addTeam`;
 
       const response = await fetch(url, {
         method,
@@ -177,7 +178,7 @@ export default function Teams() {
 
     try {
       const method = "PUT";
-      const url = `https://callback-4kg4.onrender.com/api/helpers/updateTeam/${editId}`;
+      const url = `${API_URL}/api/helpers/updateTeam/${editId}`;
 
       const response = await fetch(url, {
         method,

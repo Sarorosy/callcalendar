@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
+import $ from "jquery";
 import DataTable from "datatables.net-react";
 import ReactDOMServer from "react-dom/server";
 import DT from "datatables.net-dt";
-import $ from "jquery";
 import { useAuth } from "../../utils/idb.jsx";
 import {
   formatBookingDateTime,
@@ -13,6 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { RefreshCcw } from "lucide-react";
 import { getSocket } from "../../utils/Socket.jsx";
+import API_URL from "../../utils/constants.jsx";
 
 export default function ExternalCalls() {
   const { user } = useAuth();
@@ -150,7 +151,7 @@ export default function ExternalCalls() {
       setIsLoading(true);
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/additional/getexternalcalls",
+        `${API_URL}/api/additional/getexternalcalls`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -185,7 +186,7 @@ export default function ExternalCalls() {
 
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/history/${bookingId}`
+        `${API_URL}/api/bookings/history/${bookingId}`
       );
       const result = await res.json();
 

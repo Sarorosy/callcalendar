@@ -2,14 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useAuth } from "../../utils/idb";
 import { useNavigate } from "react-router-dom";
+import $ from "jquery";
 import DataTable from "datatables.net-react";
 import ReactDOMServer from "react-dom/server";
 import DT from "datatables.net-dt";
-import $ from "jquery";
 import SkeletonLoader from "../../components/SkeletonLoader";
 import moment from "moment/moment";
 import { RefreshCcw } from "lucide-react";
 import { getSocket } from "../../utils/Socket";
+import API_URL from "../../utils/constants";
 function CallRequestsFromRc() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -54,7 +55,7 @@ function CallRequestsFromRc() {
     try {
       setLoading(true);
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/additional/callrequestrc",
+        `${API_URL}/api/additional/callrequestrc`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

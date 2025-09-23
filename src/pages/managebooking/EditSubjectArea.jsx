@@ -6,6 +6,7 @@ import { useAuth } from "../../utils/idb";
 import toast from "react-hot-toast";
 import SocketHandler from "../../hooks/SocketHandler";
 import { X } from "lucide-react";
+import API_URL from "../../utils/constants";
 
 const EditSubjectArea = ({
   selectedRow,
@@ -65,7 +66,7 @@ const EditSubjectArea = ({
 
     try {
       const res = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getConsultantsBySubjectArea",
+        `${API_URL}/api/helpers/getConsultantsBySubjectArea`,
         {
           method: "POST",
           headers: {
@@ -111,7 +112,7 @@ const EditSubjectArea = ({
       setUpdatingSubjectArea(true);
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/updateSubjectArea",
+        `${API_URL}/api/bookings/updateSubjectArea`,
         {
           method: "POST",
           headers: {

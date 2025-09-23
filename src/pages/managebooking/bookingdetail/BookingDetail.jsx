@@ -33,6 +33,7 @@ import OtherCalls from "./OtherCalls";
 import CallUpdateOtherActions from "./CallUpdateOtherActions";
 import SocketHandler from "../../../hooks/SocketHandler";
 import { getSocket } from "../../../utils/Socket";
+import API_URL from "../../../utils/constants";
 
 const BookingDetail = () => {
   const navigate = useNavigate();
@@ -135,7 +136,7 @@ const BookingDetail = () => {
       }
 
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/fetchBookingById`,
+        `${API_URL}/api/bookings/fetchBookingById`,
         {
           method: "POST",
           headers: {
@@ -256,7 +257,7 @@ const resetBookingStates = () => {
     try {
       setLoadingFollowers(true);
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/helpers/getFollowerConsultant`,
+        `${API_URL}/api/helpers/getFollowerConsultant`,
         {
           method: "POST",
           headers: {
@@ -288,7 +289,7 @@ const resetBookingStates = () => {
       let filteredConsultants = [];
       if (call_related_to === "subject_area_related") {
         const res = await fetch(
-          "https://callback-4kg4.onrender.com/api/helpers/getConsultantsBySubjectArea",
+          `${API_URL}/api/helpers/getConsultantsBySubjectArea`,
           {
             method: "POST",
             headers: {
@@ -323,7 +324,7 @@ const resetBookingStates = () => {
   const fetchMsgData = async (bookingId) => {
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/helpers/getMessageData?bookingId=${bookingId}`
+        `${API_URL}/api/helpers/getMessageData?bookingId=${bookingId}`
       );
       const data = await response.json();
       if (data.status) {
@@ -337,7 +338,7 @@ const resetBookingStates = () => {
   const getExternalCallByBookingId = async (bookingId) => {
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/getExternalCallByBookingId?bookingId=${bookingId}`
+        `${API_URL}/api/bookings/getExternalCallByBookingId?bookingId=${bookingId}`
       );
       const data = await response.json();
       if (data.status) {
@@ -376,7 +377,7 @@ const resetBookingStates = () => {
 
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/deleteBookingById`,
+        `${API_URL}/api/bookings/deleteBookingById`,
         {
           method: "POST",
           headers: {
@@ -414,7 +415,7 @@ const resetBookingStates = () => {
 
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/setAsConverted`,
+        `${API_URL}/api/bookings/setAsConverted`,
         {
           method: "POST",
           headers: {
@@ -460,7 +461,7 @@ const resetBookingStates = () => {
     try {
       setIsMsgSending(true);
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/sendMessage",
+        `${API_URL}/api/helpers/sendMessage`,
         {
           method: "POST",
           headers: {
@@ -499,7 +500,7 @@ const resetBookingStates = () => {
     try {
       setIsSubmitting(true);
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/updateStatusByCrm",
+        `${API_URL}/api/bookings/updateStatusByCrm`,
         {
           method: "POST",
           headers: {
@@ -542,7 +543,7 @@ const resetBookingStates = () => {
       });
 
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/getBookingData?bookingId=${bookingId}`
+        `${API_URL}/api/bookings/getBookingData?bookingId=${bookingId}`
       );
 
       const result = await response.json();
@@ -572,7 +573,7 @@ const resetBookingStates = () => {
 
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/markAsConfirmByClient`,
+        `${API_URL}/api/bookings/markAsConfirmByClient`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -589,7 +590,7 @@ const resetBookingStates = () => {
           setLoaderMessage("Rescheduling other calls...");
 
           const res2 = await fetch(
-            `https://callback-4kg4.onrender.com/api/bookings/rescheduleOtherBookings`,
+            `${API_URL}/api/bookings/rescheduleOtherBookings`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -633,7 +634,7 @@ const resetBookingStates = () => {
       setIsReassigning(true); // optional: for disabling button or showing spinner
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/reassignComment",
+        `${API_URL}/api/bookings/reassignComment`,
         {
           method: "POST",
           headers: {
@@ -680,7 +681,7 @@ const resetBookingStates = () => {
       setIsProcessing(true);
       setLoaderMessage("Reassigning Consultant...");
       const res = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/reassignToConsultant",
+        `${API_URL}/api/bookings/reassignToConsultant`,
         {
           method: "POST",
           headers: {
@@ -720,7 +721,7 @@ const resetBookingStates = () => {
       setIsProcessing(true);
       setLoaderMessage("Cancelling...");
       const res = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/updateConsultationStatus",
+        `${API_URL}/api/bookings/updateConsultationStatus`,
         {
           method: "POST",
           headers: {
@@ -824,7 +825,7 @@ const resetBookingStates = () => {
       }
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/updateConsultationStatus",
+        `${API_URL}/api/bookings/updateConsultationStatus`,
         {
           method: "POST",
           body: formData, // browser sets the correct multipart/form-data boundary automatically
@@ -865,7 +866,7 @@ const resetBookingStates = () => {
       setLoaderMessage("Assigning External Call...");
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/assignExternalCall",
+        `${API_URL}/api/bookings/assignExternalCall`,
         {
           method: "POST",
           headers: {
@@ -903,7 +904,7 @@ const resetBookingStates = () => {
       setLoaderMessage("Reassigning call...");
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/updateReassignCallStatus",
+        `${API_URL}/api/bookings/updateReassignCallStatus`,
         {
           method: "POST",
           headers: {
@@ -968,7 +969,7 @@ const resetBookingStates = () => {
       setLoaderMessage("Updating External Call...");
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/updateExternalConsultationStatus",
+        `${API_URL}/api/bookings/updateExternalConsultationStatus`,
         {
           method: "POST",
           headers: {
@@ -1035,7 +1036,7 @@ const resetBookingStates = () => {
       setLoaderMessage("Submitting...");
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/submitCallCompletionComment",
+        `${API_URL}/api/bookings/submitCallCompletionComment`,
         {
           method: "POST",
           headers: {
@@ -1086,7 +1087,7 @@ const resetBookingStates = () => {
       setLoaderMessage("Adding Follower...");
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/addFollower",
+        `${API_URL}/api/helpers/addFollower`,
         {
           method: "POST",
           headers: {
@@ -1152,7 +1153,7 @@ const resetBookingStates = () => {
       setLoaderMessage("Updating External Call...");
 
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/updateExternalBookingInfo",
+        `${API_URL}/api/helpers/updateExternalBookingInfo`,
         {
           method: "POST",
           headers: {

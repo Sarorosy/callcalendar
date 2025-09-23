@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import $ from "jquery";
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import { toast } from "react-hot-toast";
-import $ from "jquery";
 import { PlusIcon, X, XIcon } from "lucide-react";
 import Select from "react-select";
 import SkeletonLoader from "../components/SkeletonLoader";
 import { getSocket } from "../utils/Socket";
+import API_URL from "../utils/constants";
 
 DataTable.use(DT);
 
@@ -60,7 +61,7 @@ export default function Plans() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/plans/getAllPlans"
+        `${API_URL}/api/plans/getAllPlans`
       );
       const result = await response.json();
 
@@ -80,7 +81,7 @@ export default function Plans() {
   const updatePlanStatus = async (planId, status) => {
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/plans/update-plan-status/${planId}`,
+        `${API_URL}/api/plans/update-plan-status/${planId}`,
         {
           method: "PUT",
           headers: {
@@ -111,7 +112,7 @@ export default function Plans() {
 
     try {
       const method = "POST";
-      const url = "https://callback-4kg4.onrender.com/api/plans/addPlan";
+      const url = `${API_URL}/api/plans/addPlan`;
 
       const response = await fetch(url, {
         method,
@@ -152,7 +153,7 @@ export default function Plans() {
     try {
       setUpdating(true);
       const method = "PUT";
-      const url = `https://callback-4kg4.onrender.com/api/plans/updatePlan/${editId}`;
+      const url = `${API_URL}/api/plans/updatePlan/${editId}`;
 
       const response = await fetch(url, {
         method,

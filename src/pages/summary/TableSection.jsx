@@ -10,6 +10,7 @@ import {
   UserX,
   XCircle,
 } from "lucide-react";
+import API_URL from "../../utils/constants";
 
 const badgeMeta = {
   "Call Scheduled": {
@@ -107,7 +108,7 @@ const TableSection = ({
 
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/history/${bookingId}`
+        `${API_URL}/api/bookings/history/${bookingId}`
       );
       const result = await res.json();
       const data = result.status ? result.data : [];

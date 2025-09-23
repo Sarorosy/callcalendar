@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "../assets/images/callcalendar-logo.png";
 import { toast } from "react-hot-toast";
+import API_URL from "../utils/constants";
 
 export default function ResetPassword() {
   const [username, setUsername] = useState("");
@@ -15,7 +16,7 @@ export default function ResetPassword() {
   const handleSendOtp = async () => {
     setLoadingSendOtp(true);
     try {
-      const res = await fetch("https://callback-4kg4.onrender.com/api/users/sendOtpVerification", {
+      const res = await fetch(`${API_URL}/api/users/sendOtpVerification`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username }),
@@ -52,7 +53,7 @@ export default function ResetPassword() {
     const enteredOtp = otp.join("");
 
     try {
-      const res = await fetch("https://callback-4kg4.onrender.com/api/users/verifyOtp", {
+      const res = await fetch(`${API_URL}/api/users/verifyOtp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, otp: enteredOtp }),

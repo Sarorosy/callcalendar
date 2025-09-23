@@ -9,6 +9,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import API_URL from "../../../utils/constants";
 
 const OverallHistory = ({ bookingData }) => {
   const [overallHistory, setOverallHistory] = useState([]);
@@ -24,7 +25,7 @@ const OverallHistory = ({ bookingData }) => {
   const fetchOverallHistory = async (bookingId) => {
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/history/${bookingId}`
+        `${API_URL}/api/bookings/history/${bookingId}`
       );
       const data = await res.json();
       setOverallHistory(data.data);
@@ -34,7 +35,7 @@ const OverallHistory = ({ bookingData }) => {
         const status = extractStatus(commentText);
         if (status) {
           const statusRes = await fetch(
-            `https://callback-4kg4.onrender.com/api/bookings/statusHistory?bookingId=${bookingId}&status=${status}`
+            `${API_URL}/api/bookings/statusHistory?bookingId=${bookingId}&status=${status}`
           );
           const statusData = await statusRes.json();
           setStatusHistories((prev) => ({

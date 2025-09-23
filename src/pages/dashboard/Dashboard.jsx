@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ConsultantTimings from "./ConsultantTimings";
 import BlockSlot from "./BlockSlot";
 import { getSocket } from "../../utils/Socket";
+import API_URL from "../../utils/constants";
 
 function Dashboard() {
   const { user } = useAuth();
@@ -55,7 +56,7 @@ function Dashboard() {
   const fetchParticularStatus = async (crmId, status) => {
     try {
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/dashboard/getparticularstatuscalls",
+        `${API_URL}/api/dashboard/getparticularstatuscalls`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -106,7 +107,7 @@ function Dashboard() {
 
   return (
     <div className="">
-      <div className="flex gap-2 items-center mb-4"><h2 class="text-[16px] font-semibold text-gray-900">Dashboard</h2></div>
+      <div className="flex gap-2 items-center mb-4"><h2 className="text-[16px] font-semibold text-gray-900">Dashboard</h2></div>
       {(user?.fld_admin_type === "SUPERADMIN" ||
         user?.fld_admin_type === "EXECUTIVE") && (
         <div className="w-full bg-white p-4  rounded">

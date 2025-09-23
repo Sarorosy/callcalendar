@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Clock, User, Calendar, Phone, FileText, Info, ChevronDown, ChevronUp } from 'lucide-react';
 import { formatDate } from '../../../helpers/CommonHelper';
+import API_URL from '../../../utils/constants';
 
 const OtherCalls = ({ bookingId, clientId, fetchBookingById }) => {
   const [allbookingData, setAllbookingData] = useState([]);
@@ -12,7 +13,7 @@ const OtherCalls = ({ bookingId, clientId, fetchBookingById }) => {
       setLoading(true);
       try {
         const response = await fetch(
-          `https://callback-4kg4.onrender.com/api/bookings/getAllClientBookingData?clientId=${clientId}`
+          `${API_URL}/api/bookings/getAllClientBookingData?clientId=${clientId}`
         );
 
         const result = await response.json();

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
+import $ from "jquery";
 import DataTable from "datatables.net-react";
 import ReactDOMServer from "react-dom/server";
 import DT from "datatables.net-dt";
-import $ from "jquery";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../utils/idb.jsx";
 import { PlusIcon } from "lucide-react";
@@ -14,6 +14,7 @@ import Select from "react-select";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatBookingDateTime, formatDate } from "../helpers/CommonHelper.jsx";
 import { getSocket } from "../utils/Socket.jsx";
+import API_URL from "../utils/constants.jsx";
 
 export default function Followers() {
   const { user } = useAuth();
@@ -118,7 +119,7 @@ export default function Followers() {
       setIsLoading(true);
 
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/followers/getAllFollowers?usertype=${user?.fld_admin_type}&userid=${user?.id}`
+        `${API_URL}/api/followers/getAllFollowers?usertype=${user?.fld_admin_type}&userid=${user?.id}`
       );
 
       const result = await response.json();
@@ -146,7 +147,7 @@ export default function Followers() {
 
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/history/${bookingId}`
+        `${API_URL}/api/bookings/history/${bookingId}`
       );
       const result = await res.json();
 
@@ -225,7 +226,7 @@ export default function Followers() {
   const updateFollowersStatus = async (approveData, followerid, bookingid) => {
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/followers/followerclaimbooking/${followerid}/${bookingid}`,
+        `${API_URL}/api/followers/followerclaimbooking/${followerid}/${bookingid}`,
         {
           method: "PUT",
           headers: {

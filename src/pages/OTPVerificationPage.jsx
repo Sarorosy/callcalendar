@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Clock, User, Mail, Building, Phone, AlertTriangle } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import logo from '../assets/images/callcalendar-logo.png';
+import API_URL from '../utils/constants';
 const OTPVerificationPage = () => {
   // State management
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -45,7 +46,7 @@ const OTPVerificationPage = () => {
     }
 
     try {
-      const response = await fetch('https://callback-4kg4.onrender.com/api/helpers/verifyOtpUrl', {
+      const response = await fetch(`${API_URL}/api/helpers/verifyOtpUrl`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -147,7 +148,7 @@ const handleSubmit = async () => {
   const loadingToast = toast.loading('Please Wait!');
 
   try {
-    const response = await fetch('https://callback-4kg4.onrender.com/api/helpers/validateOtp', {
+    const response = await fetch(`${API_URL}/api/helpers/validateOtp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

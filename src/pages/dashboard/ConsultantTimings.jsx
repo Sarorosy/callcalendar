@@ -5,6 +5,7 @@ import { Plus, X } from "lucide-react";
 import { TimeZones } from "../../helpers/TimeZones";
 import SocketHandler from "../../hooks/SocketHandler";
 import moment from "moment-timezone";
+import API_URL from "../../utils/constants";
 
 function ConsultantTimings() {
   const [allConsultants, setAllConsultants] = useState([]);
@@ -64,7 +65,7 @@ function ConsultantTimings() {
   const fetchAdmins = async (type, status, setter) => {
     try {
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getAdmin",
+        `${API_URL}/api/helpers/getAdmin`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -93,7 +94,7 @@ function ConsultantTimings() {
     setConsultantSettings(null);
     try {
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/dashboard/getconsultantsettings",
+        `${API_URL}/api/dashboard/getconsultantsettings`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -262,7 +263,7 @@ function ConsultantTimings() {
 
       // Submit to API
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/dashboard/saveconsultantsettings",
+        `${API_URL}/api/dashboard/saveconsultantsettings`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

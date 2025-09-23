@@ -17,6 +17,7 @@ import logo from "../assets/images/callcalendar-logo.png";
 import Notification from "./Notification.jsx";
 import PlansDropdown from "./PlansDropdown.jsx";
 import { getSocket } from "../utils/Socket.jsx";
+import API_URL from "../utils/constants.jsx";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -81,7 +82,7 @@ export default function Header() {
   const fetchPendingFollowerCallsCount = async () => {
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/followers/fetchPendingFollowerCallsCount?usertype=${user?.fld_admin_type}&userid=${user?.id}`
+        `${API_URL}/api/followers/fetchPendingFollowerCallsCount?usertype=${user?.fld_admin_type}&userid=${user?.id}`
       );
       const result = await response.json();
       if (result.status) {

@@ -10,6 +10,7 @@ import moment from "moment-timezone";
 import { getSocket } from "../../utils/Socket.jsx";
 import { useAuth } from "../../utils/idb.jsx";
 import { formatDate } from "../../helpers/CommonHelper.jsx";
+import API_URL from "../../utils/constants.jsx";
 
 const ScheduleCall = () => {
   const {user}=useAuth();
@@ -43,7 +44,7 @@ const ScheduleCall = () => {
     setSubmitMessage("");
     setError("");
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/helpers/getBookingDetailsWithRc?id=${bookingId}`
+        `${API_URL}/api/helpers/getBookingDetailsWithRc?id=${bookingId}`
       );
       const data = await response.json();
 
@@ -184,7 +185,7 @@ while (current <= endTime) {
 
     try {
       const res1 = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getBookingData",
+        `${API_URL}/api/helpers/getBookingData`,
         {
           method: "POST",
           headers: {
@@ -205,7 +206,7 @@ while (current <= endTime) {
       const data1 = await res1.json();
 
       const res2 = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getRcCallBookingRequest",
+        `${API_URL}/api/helpers/getRcCallBookingRequest`,
         {
           method: "POST",
           headers: {
@@ -349,7 +350,7 @@ if (!urlPattern.test(callLink.trim())) {
     try {
       setIsSubmitting(true);
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/bookings/saveCallScheduling",
+        `${API_URL}/api/bookings/saveCallScheduling`,
         {
           method: "POST",
           headers: {

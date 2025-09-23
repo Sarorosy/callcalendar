@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import SocketHandler from "../../hooks/SocketHandler";
 import { getSocket } from "../../utils/Socket";
+import API_URL from "../../utils/constants";
 
 const badgeMeta = {
   "Call Scheduled": {
@@ -312,7 +313,7 @@ const ViewAllTable = () => {
     try {
       // Fetch consultants first
       const consultantRes = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getUsersByRole",
+        `${API_URL}/api/helpers/getUsersByRole`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -323,7 +324,7 @@ const ViewAllTable = () => {
 
       // Then fetch CRMs
       const crmRes = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getUsersByRole",
+        `${API_URL}/api/helpers/getUsersByRole`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -346,7 +347,7 @@ const ViewAllTable = () => {
 
     try {
       const res = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getUsersByRole",
+        `${API_URL}/api/helpers/getUsersByRole`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -408,7 +409,7 @@ const ViewAllTable = () => {
 
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/fetchSummaryBookings`,
+        `${API_URL}/api/bookings/fetchSummaryBookings`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -530,7 +531,7 @@ const ViewAllTable = () => {
 
     try {
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/history/${bookingId}`
+        `${API_URL}/api/bookings/history/${bookingId}`
       );
 
       if (!res.ok) {

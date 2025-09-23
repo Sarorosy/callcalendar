@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { BarChart2 } from "lucide-react";
+import API_URL from "../utils/constants";
 
 export default function PlansDropdown() {
   const [open, setOpen] = useState(false);
@@ -14,7 +15,7 @@ export default function PlansDropdown() {
     if (newOpen) {
       try {
         const response = await fetch(
-          "https://callback-4kg4.onrender.com/api/approveaddcallrequests/getAllPendingaddcallrequests"
+          `${API_URL}/api/approveaddcallrequests/getAllPendingaddcallrequests`
         );
         const result = await response.json();
 

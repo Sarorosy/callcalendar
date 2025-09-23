@@ -5,6 +5,7 @@ import Select from "react-select";
 import { set } from "idb-keyval";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import API_URL from "../../utils/constants";
 
 const EditUser = ({
   setShowForm,
@@ -110,7 +111,7 @@ const EditUser = ({
     try {
       setisUpdating(true);
       const res = await fetch(
-        `https://callback-4kg4.onrender.com/api/users/update/${user_id}`,
+        `${API_URL}/api/users/update/${user_id}`,
         {
           method: "PUT",
           headers: {

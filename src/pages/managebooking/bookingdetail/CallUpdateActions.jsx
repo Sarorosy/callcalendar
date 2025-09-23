@@ -10,6 +10,7 @@ import {
   Upload,
   Star,
 } from "lucide-react";
+import API_URL from "../../../utils/constants";
 
 const CallUpdateActions = ({
   bookingData,
@@ -139,7 +140,7 @@ const [ratingQ1, setRatingQ1] = useState(0);
   const fetchExternalCallCount = async (bookingId) => {
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/getExternalCallCount?bookingId=${bookingId}`
+        `${API_URL}/api/bookings/getExternalCallCount?bookingId=${bookingId}`
       );
       const data = await response.json();
 
@@ -353,7 +354,7 @@ const [ratingQ1, setRatingQ1] = useState(0);
 
     try {
       const response = await fetch(
-        `https://callback-4kg4.onrender.com/api/bookings/checkCompletedCall`,
+        `${API_URL}/api/bookings/checkCompletedCall`,
         {
           method: "POST",
           headers: {

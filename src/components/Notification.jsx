@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { useAuth } from "../utils/idb";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getSocket } from "../utils/Socket";
+import API_URL from "../utils/constants";
 
 const Notification = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -44,7 +45,7 @@ useEffect(() => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://callback-4kg4.onrender.com/api/helpers/getNotifications",
+        `${API_URL}/api/helpers/getNotifications`,
         {
           method: "POST",
           headers: {
@@ -103,7 +104,7 @@ useEffect(() => {
 
 const handleNotificationClick = async (notif) => {
   try {
-    await fetch("https://callback-4kg4.onrender.com/api/helpers/markAsRead", {
+    await fetch(`${API_URL}/api/helpers/markAsRead`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
