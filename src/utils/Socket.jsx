@@ -44,7 +44,7 @@ export const initSocket = (userId) => {
 export const getSocket = () => {
   if (!socket) {
     // initialize socket without userId - you can later emit registerUser separately
-    socket = io("${API_URL}");
+    socket = io(`${API_URL}`);
   }
   return socket;
 };
