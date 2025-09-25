@@ -88,14 +88,14 @@ export default function Bookings() {
         const bookingTeams = Array.isArray(newBooking.fld_teamid)
           ? newBooking.fld_teamid
           : String(newBooking.fld_teamid)
-              .split(",")
-              .map((id) => id.trim());
+            .split(",")
+            .map((id) => id.trim());
 
         const userTeams = Array.isArray(user.fld_team_id)
           ? user.fld_team_id
           : String(user.fld_team_id)
-              .split(",")
-              .map((id) => id.trim());
+            .split(",")
+            .map((id) => id.trim());
 
         // check if any team id matches
         const hasTeamMatch = bookingTeams.some((teamId) =>
@@ -123,7 +123,7 @@ export default function Bookings() {
         if (list.some((booking) => booking.id == mappedBooking.id)) {
           return list;
         }
-        return [ mappedBooking,...list];
+        return [mappedBooking, ...list];
       });
       if (newBooking.fld_consultant_another_option === "TEAM") {
         setTeamBookings((prev) => {
@@ -160,14 +160,28 @@ export default function Bookings() {
       setBookings((prev) => prev.filter((booking) => booking.id != bookingId));
     };
 
+    const handleMiniStatusUpdated = ({ bookingId, field, value }) => {
+    console.log("Socket Called - Mini Status Updated", bookingId, field, value);
+
+    setBookings((prev) => {
+      return prev.map((booking) =>
+        booking.id === bookingId
+          ? { ...booking, [field]: value } // update only the specific field
+          : booking
+      );
+    });
+  };
+
     socket.on("bookingAdded", handleBookingAdded);
     socket.on("bookingUpdated", handleBookingUpdated);
     socket.on("bookingDeleted", handleBookingDeleted);
+    socket.on("miniStatusUpdated", handleMiniStatusUpdated);
 
     return () => {
       socket.off("bookingAdded", handleBookingAdded);
       socket.off("bookingUpdated", handleBookingUpdated);
       socket.off("bookingDeleted", handleBookingDeleted);
+      socket.off("miniStatusUpdated", handleMiniStatusUpdated);
     };
   }, [user.id]);
 
@@ -559,6 +573,7 @@ export default function Bookings() {
   };
 
   const columns = [
+  
     {
       title: "Client",
       data: "client_name",
@@ -568,21 +583,68 @@ export default function Bookings() {
         const textStyle = isDeleted ? "line-through text-gray-400" : "";
         const displayText = `${data} - ${clientId}`;
         const shouldShowTooltip = displayText.length > 20;
+
+        const isSuperAdmin = user?.fld_admin_type === "SUPERADMIN";
+        const isSubAdmin = user?.fld_admin_type === "SUBADMIN";
+
+        // Helper to render each status
+        const renderStatus = (field, label, value) => {
+          if (!value) {
+            // default NULL → dropdown
+            return `
+          <div class="mt-1">
+            <label class="text-xs text-gray-500">${label}</label>
+            <select class="status-dropdown ml-1 text-sm border rounded px-1 py-0.5"
+                    data-id="${row.id}"
+                    data-field="${field}">
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+        `;
+          }
+          if (value === "Yes") {
+            return `
+          <div class="mt-1">
+            <span class="px-1 py-0.5 bg-green-500 text-white rounded f-11">${label} Done</span>
+          </div>
+        `;
+          }
+          return "";
+        };
+
         return `
-       <button
-        ${
-          shouldShowTooltip
+      <div>
+        <button
+          ${shouldShowTooltip
             ? `data-tooltip-id="my-tooltip" data-tooltip-content="${displayText}"`
             : ""
-        }
-        class="details-btn font-medium text-blue-600 hover:underline truncate w-[150px] text-left ${textStyle}"
-        data-id="${row.id}">
-        ${displayText}
-      </button>
+          }
+          class="details-btn font-medium text-blue-600 hover:underline truncate w-[150px] text-left ${textStyle}"
+          data-id="${row.id}">
+          ${displayText}
+        </button>
+        
+        <!-- Three dropdowns or badges -->
+
+        <div class="flex flex-col gap-1 mt-2">
+        ${ (isSuperAdmin || (isSubAdmin && user.fld_permission.includes("Loop_Tagging")))
+            ? renderStatus("loopTagStatus", "Loop Tag", row.loopTagStatus)
+            : "" }
+        
+        ${ (isSuperAdmin || (isSubAdmin && user.fld_permission.includes("Comment_Received")))
+            ? renderStatus("commentReceived", "Comment Received", row.commentReceived)
+            : "" }
+
+        ${ (isSuperAdmin || (isSubAdmin && user.fld_permission.includes("Quote_Shared")))
+            ? renderStatus("quoteShared", "Quote Shared", row.quoteShared)
+            : "" }
+      </div>
+
+      </div>
     `;
       },
     },
-
     {
       title: "Consultant",
       data: "consultant_name",
@@ -738,6 +800,24 @@ export default function Bookings() {
           setSelectedRow(rowData);
           setShowEditSubjectForm(true);
         });
+
+      container
+        .find(".status-dropdown")
+        .off("change")
+        .on("change", function () {
+          const bookingId = $(this).data("id");
+          const field = $(this).data("field");
+          const value = $(this).val();
+
+          if (bookingId && field && value) {
+            if (window.confirm(`Are you sure you want to set ${field} to "${value}"?`)) {
+              handleMiniStatusChange(bookingId, field, value);
+            } else {
+              $(this).val(""); // reset if cancelled
+            }
+          }
+        });
+
     },
     createdRow: function (row, data, dataIndex) {
       const rowClass = getConsultationStatusClass(data);
@@ -747,6 +827,39 @@ export default function Bookings() {
     },
   };
 
+  async function handleMiniStatusChange(bookingId, field, value) {
+    try {
+      const response = await fetch(`${API_URL}/api/bookings/updateMiniStatus`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId,
+          field,
+          value,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.status) {
+        toast.success(`${field} updated successfully`);
+        setBookings((prev) =>
+          prev.map((booking) =>
+            booking.id === bookingId
+              ? { ...booking, [field]: value }
+              : booking
+          )
+        );
+      } else {
+        toast.error(result.message || "Failed to update status");
+      }
+    } catch (error) {
+      console.error("Error updating mini status:", error);
+      toast.error("Something went wrong while updating");
+    }
+  }
   const handleClearFilters = () => {
     const today = getCurrentDate("YYYY-MM-DD");
     const lastWeek = getDateBefore(7);
@@ -764,8 +877,8 @@ export default function Bookings() {
       date_range: [fromDate, toDate],
     });
     setSelectedCRM(null);
-  setConsultantType("ACTIVE"); 
-  setSelectedConsultant(null);
+    setConsultantType("ACTIVE");
+    setSelectedConsultant(null);
   };
   return (
     <div className="">
@@ -808,8 +921,8 @@ export default function Bookings() {
                 {loadingTeamBookings
                   ? "Loading..."
                   : showTeamBookings
-                  ? "Hide Team Bookings"
-                  : "Show Team Bookings"}
+                    ? "Hide Team Bookings"
+                    : "Show Team Bookings"}
                 {showTeamBookings ? (
                   <ChevronUp size={12} />
                 ) : (
@@ -936,10 +1049,10 @@ export default function Bookings() {
                         value={
                           crms.find((c) => c.id === selectedCRM)
                             ? {
-                                value: selectedCRM,
-                                label: crms.find((c) => c.id === selectedCRM)
-                                  .fld_name,
-                              }
+                              value: selectedCRM,
+                              label: crms.find((c) => c.id === selectedCRM)
+                                .fld_name,
+                            }
                             : null
                         }
                         onChange={(opt) => setSelectedCRM(opt.value)}
@@ -979,11 +1092,11 @@ export default function Bookings() {
                             (c) => c.id === selectedConsultant
                           )
                             ? {
-                                value: selectedConsultant,
-                                label: filteredConsultants.find(
-                                  (c) => c.id === selectedConsultant
-                                ).fld_name,
-                              }
+                              value: selectedConsultant,
+                              label: filteredConsultants.find(
+                                (c) => c.id === selectedConsultant
+                              ).fld_name,
+                            }
                             : null
                         }
                         onChange={(opt) => setSelectedConsultant(opt.value)}

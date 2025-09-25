@@ -14,6 +14,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { RefreshCcw } from "lucide-react";
 import { getSocket } from "../../utils/Socket.jsx";
 import API_URL from "../../utils/constants.jsx";
+import toast from "react-hot-toast";
 
 export default function ExternalCalls() {
   const { user } = useAuth();
@@ -58,14 +59,14 @@ export default function ExternalCalls() {
         const bookingTeams = Array.isArray(newBooking.fld_teamid)
           ? newBooking.fld_teamid
           : String(newBooking.fld_teamid)
-              .split(",")
-              .map((id) => id.trim());
+            .split(",")
+            .map((id) => id.trim());
 
         const userTeams = Array.isArray(user.fld_team_id)
           ? user.fld_team_id
           : String(user.fld_team_id)
-              .split(",")
-              .map((id) => id.trim());
+            .split(",")
+            .map((id) => id.trim());
 
         // check if any team id matches
         const hasTeamMatch = bookingTeams.some((teamId) =>
@@ -93,7 +94,7 @@ export default function ExternalCalls() {
         if (list.some((booking) => booking.id == mappedBooking.id)) {
           return list;
         }
-        return [ mappedBooking,...list];
+        return [mappedBooking, ...list];
       });
     };
 
@@ -114,12 +115,26 @@ export default function ExternalCalls() {
       });
     };
 
+    const handleMiniStatusUpdated = ({ bookingId, field, value }) => {
+      console.log("Socket Called - Mini Status Updated", bookingId, field, value);
+
+      setBookings((prev) => {
+        return prev.map((booking) =>
+          booking.id === bookingId
+            ? { ...booking, [field]: value } // update only the specific field
+            : booking
+        );
+      });
+    };
+
     socket.on("bookingUpdated", handleBookingUpdated);
     socket.on("externalBookingAdded", handleBookingAdded);
+    socket.on("miniStatusUpdated", handleMiniStatusUpdated);
 
     return () => {
       socket.off("bookingUpdated", handleBookingUpdated);
       socket.off("externalBookingAdded", handleBookingAdded);
+      socket.off("miniStatusUpdated", handleMiniStatusUpdated);
     };
   }, [user.id]);
 
@@ -225,8 +240,8 @@ export default function ExternalCalls() {
   <div class="absolute left-2 top-0 h-full border-l-2 border-blue-400"></div> -->
 
   ${history
-    .map(
-      (item) => `
+        .map(
+          (item) => `
       <div class="relative mb-2">
         
         <!-- Timeline Dot -->
@@ -247,8 +262,8 @@ export default function ExternalCalls() {
 
       </div>
     `
-    )
-    .join("")}
+        )
+        .join("")}
 </div>
 
   `;
@@ -264,35 +279,81 @@ export default function ExternalCalls() {
         const textStyle = isDeleted ? "line-through text-gray-400" : "";
         const displayText = `${data} - ${clientId}`;
         const shouldShowTooltip = displayText.length > 20;
+
+        const isSuperAdmin = user?.fld_admin_type === "SUPERADMIN";
+        const isSubAdmin = user?.fld_admin_type === "SUBADMIN";
+
+        // Helper to render each status
+        const renderStatus = (field, label, value) => {
+          if (!value) {
+            // default NULL → dropdown
+            return `
+          <div class="mt-1">
+            <label class="text-xs text-gray-500">${label}</label>
+            <select class="status-dropdown ml-1 text-sm border rounded px-1 py-0.5"
+                    data-id="${row.id}"
+                    data-field="${field}">
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+        `;
+          }
+          if (value === "Yes") {
+            return `
+          <div class="mt-1">
+            <span class="px-1 py-0.5 bg-green-500 text-white rounded f-11">${label} Done</span>
+          </div>
+        `;
+          }
+          return "";
+        };
+
+
         return `
        <button
-        ${
-          shouldShowTooltip
+        ${shouldShowTooltip
             ? `data-tooltip-id="my-tooltip" data-tooltip-content="${displayText}"`
             : ""
-        }
+          }
         class="details-btn font-medium text-blue-600 hover:underline truncate w-[150px] text-left ${textStyle}"
         data-id="${row.bookingid}">
         ${displayText}
       </button>
+
+      <!-- Three dropdowns or badges -->
+
+        <div class="flex flex-col gap-1 mt-2">
+        ${(isSuperAdmin || (isSubAdmin && user.fld_permission.includes("Loop_Tagging")))
+            ? renderStatus("loopTagStatus", "Loop Tag", row.loopTagStatus)
+            : ""}
+        
+        ${(isSuperAdmin || (isSubAdmin && user.fld_permission.includes("Comment_Received")))
+            ? renderStatus("commentReceived", "Comment Received", row.commentReceived)
+            : ""}
+
+        ${(isSuperAdmin || (isSubAdmin && user.fld_permission.includes("Quote_Shared")))
+            ? renderStatus("quoteShared", "Quote Shared", row.quoteShared)
+            : ""}
+      </div>
       `;
       },
     },
     user.fld_admin_type == "SUPERADMIN" ||
-    user.fld_admin_type == "SUBADMIN" ||
-    user.fld_admin_type == "EXECUTIVE"
+      user.fld_admin_type == "SUBADMIN" ||
+      user.fld_admin_type == "EXECUTIVE"
       ? {
-          title: "Consultant",
-          data: "fld_consultant_name",
-          render: (data) => `<div class="text-gray-700">${data || "—"}</div>`,
-        }
+        title: "Consultant",
+        data: "fld_consultant_name",
+        render: (data) => `<div class="text-gray-700">${data || "—"}</div>`,
+      }
       : null,
     user.fld_admin_type !== "EXECUTIVE"
       ? {
-          title: "Added By",
-          data: "crm_name",
-          render: (data) => `<div class="text-gray-700">${data || "—"}</div>`,
-        }
+        title: "Added By",
+        data: "crm_name",
+        render: (data) => `<div class="text-gray-700">${data || "—"}</div>`,
+      }
       : null,
     {
       title: "Booking Information",
@@ -337,11 +398,10 @@ export default function ExternalCalls() {
           data === "Completed"
             ? "text-green-600"
             : data === "Pending"
-            ? "text-orange-600"
-            : "text-gray-600";
-        return `<span class="${statusColor} font-semibold">${
-          data || "—"
-        }</span>`;
+              ? "text-orange-600"
+              : "text-gray-600";
+        return `<span class="${statusColor} font-semibold">${data || "—"
+          }</span>`;
       },
     },
   ].filter(Boolean); // <-- removes null/false entries
@@ -410,8 +470,59 @@ export default function ExternalCalls() {
           const bookingId = $(this).data("id");
           navigate(`/admin/booking_detail/${bookingId}`);
         });
+
+      container
+        .find(".status-dropdown")
+        .off("change")
+        .on("change", function () {
+          const bookingId = $(this).data("id");
+          const field = $(this).data("field");
+          const value = $(this).val();
+
+          if (bookingId && field && value) {
+            if (window.confirm(`Are you sure you want to set ${field} to "${value}"?`)) {
+              handleMiniStatusChange(bookingId, field, value);
+            } else {
+              $(this).val(""); // reset if cancelled
+            }
+          }
+        });
     },
   };
+
+  async function handleMiniStatusChange(bookingId, field, value) {
+    try {
+      const response = await fetch(`${API_URL}/api/bookings/updateMiniStatus`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId,
+          field,
+          value,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.status) {
+        toast.success(`${field} updated successfully`);
+        setBookings((prev) =>
+          prev.map((booking) =>
+            booking.id === bookingId
+              ? { ...booking, [field]: value }
+              : booking
+          )
+        );
+      } else {
+        toast.error(result.message || "Failed to update status");
+      }
+    } catch (error) {
+      console.error("Error updating mini status:", error);
+      toast.error("Something went wrong while updating");
+    }
+  }
 
   return (
     <div className="">

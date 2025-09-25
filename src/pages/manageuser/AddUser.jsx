@@ -237,13 +237,13 @@ const AddUser = ({
                     type="checkbox"
                     className="mr-1"
                     checked={formData.permissions.includes(
-                      "Approve Add Call Request"
+                      "Approve_Add_Call_Request"
                     )}
                     onChange={(e) => {
                       const updatedPermissions = e.target.checked
-                        ? [...formData.permissions, "Approve Add Call Request"]
+                        ? [...formData.permissions, "Approve_Add_Call_Request"]
                         : formData.permissions.filter(
-                            (perm) => perm !== "Approve Add Call Request"
+                            (perm) => perm !== "Approve_Add_Call_Request"
                           );
 
                       setFormData({
@@ -254,6 +254,85 @@ const AddUser = ({
                   />
                   Approve Add Call Request
                 </label>
+                
+              )}
+
+              {formType === "SUBADMIN" && (
+                <label>
+                  <input
+                    type="checkbox"
+                    className="mr-1"
+                    checked={formData.permissions.includes(
+                      "Loop_Tagging"
+                    )}
+                    onChange={(e) => {
+                      const updatedPermissions = e.target.checked
+                        ? [...formData.permissions, "Loop_Tagging"]
+                        : formData.permissions.filter(
+                            (perm) => perm !== "Loop_Tagging"
+                          );
+
+                      setFormData({
+                        ...formData,
+                        permissions: updatedPermissions,
+                      });
+                    }}
+                  />
+                  Loop Tagging
+                </label>
+                
+              )}
+
+              {formType === "SUBADMIN" && (
+                <label>
+                  <input
+                    type="checkbox"
+                    className="mr-1"
+                    checked={formData.permissions.includes(
+                      "Comment_Received"
+                    )}
+                    onChange={(e) => {
+                      const updatedPermissions = e.target.checked
+                        ? [...formData.permissions, "Comment_Received"]
+                        : formData.permissions.filter(
+                            (perm) => perm !== "Comment_Received"
+                          );
+
+                      setFormData({
+                        ...formData,
+                        permissions: updatedPermissions,
+                      });
+                    }}
+                  />
+                  Comment Received
+                </label>
+                
+              )}
+
+              {formType === "SUBADMIN" && (
+                <label>
+                  <input
+                    type="checkbox"
+                    className="mr-1"
+                    checked={formData.permissions.includes(
+                      "Quote_Shared"
+                    )}
+                    onChange={(e) => {
+                      const updatedPermissions = e.target.checked
+                        ? [...formData.permissions, "Quote_Shared"]
+                        : formData.permissions.filter(
+                            (perm) => perm !== "Quote_Shared"
+                          );
+
+                      setFormData({
+                        ...formData,
+                        permissions: updatedPermissions,
+                      });
+                    }}
+                  />
+                  Quote Shared
+                </label>
+                
               )}
             </div>
           </div>

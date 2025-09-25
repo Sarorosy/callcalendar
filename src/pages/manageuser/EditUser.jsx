@@ -51,6 +51,10 @@ const EditUser = ({
         permissions: {
           reassign: parsedPermissions.includes("Reassign"),
           approve_call: parsedPermissions.includes("Approve_Add_Call_Request"),
+
+          loop_tagging: parsedPermissions.includes("Loop_Tagging"),
+          comment_received: parsedPermissions.includes("Comment_Received"),
+          quote_shared: parsedPermissions.includes("Quote_Shared"),
         },
       });
     }
@@ -95,6 +99,15 @@ const EditUser = ({
     if (permissions.reassign) permissionArray.push("Reassign");
     if (permissions.approve_call)
       permissionArray.push("Approve_Add_Call_Request");
+
+    if (permissions.loop_tagging)
+      permissionArray.push("Loop_Tagging");
+
+    if (permissions.comment_received)
+      permissionArray.push("Comment_Received");
+
+    if (permissions.quote_shared)
+      permissionArray.push("Quote_Shared");
 
     const payload = {
       user_id,
@@ -329,6 +342,66 @@ const EditUser = ({
                     }
                   />
                   Approve Add Call Request
+                </label>
+              )}
+
+              {formType === "SUBADMIN" && (
+                <label>
+                  <input
+                    type="checkbox"
+                    className="mr-1"
+                    checked={formData.permissions.loop_tagging}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        permissions: {
+                          ...formData.permissions,
+                          loop_tagging: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                  Loop Tagging
+                </label>
+              )}
+
+              {formType === "SUBADMIN" && (
+                <label>
+                  <input
+                    type="checkbox"
+                    className="mr-1"
+                    checked={formData.permissions.comment_received}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        permissions: {
+                          ...formData.permissions,
+                          comment_received: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                  Comment Received
+                </label>
+              )}
+
+              {formType === "SUBADMIN" && (
+                <label>
+                  <input
+                    type="checkbox"
+                    className="mr-1"
+                    checked={formData.permissions.quote_shared}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        permissions: {
+                          ...formData.permissions,
+                          quote_shared: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                  Quote Shared
                 </label>
               )}
             </div>
