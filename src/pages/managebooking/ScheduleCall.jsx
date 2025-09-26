@@ -380,7 +380,7 @@ if (!urlPattern.test(callLink.trim())) {
           window.location.href = "https://callcalendar.rapidcollaborate.com/bookings";
         }, 1500); 
       } else {
-        toast.errro("Failed to submit booking.");
+        toast.error("Failed to submit booking.");
       }
     } catch (err) {
       console.error("Submission error:", err);
