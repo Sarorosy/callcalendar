@@ -1,22 +1,33 @@
 import React, { useEffect, useState } from "react";
 import "./Calendar.css"; // For CSS styles
 
-const CustomCalendar = ({ consultantSettings, onDateClick,selectedDateState }) => {
+const CustomCalendar = ({ consultantSettings, onDateClick, selectedDateState }) => {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDate, setSelectedDate] = useState(
-  selectedDateState ? new Date(selectedDateState) : null
-);
-  
-if (!consultantSettings) {
+    selectedDateState ? new Date(selectedDateState) : null
+  );
+
+  console.log(consultantSettings)
+
+  if (!consultantSettings) {
     return <div className="text-gray-500">Loading calendar...</div>;
   }
 
-  // Extract exclusions and selected weekdays
-  const excludedDates = consultantSettings.fld_days_exclusion
-    .split("|~|")
-    .map((d) => d.trim());
+  let excludedDates = [];
+
+  try {
+    if (consultantSettings?.fld_days_exclusion) {
+      excludedDates = consultantSettings.fld_days_exclusion
+        .split("|~|")
+        .map((d) => d.trim());
+    }
+  } catch (err) {
+    console.error("Error parsing fld_days_exclusion:", err);
+    excludedDates = [];
+  }
+
 
   const allowedWeekDays = consultantSettings.fld_selected_week_days
     .split(",")
@@ -120,7 +131,7 @@ if (!consultantSettings) {
   return (
     <div className="calendar-wrapper the_mg">
       <div className="calendar-header">
-        <button type="button" className="flex items-center" onClick={handlePrev}><svg xmlns="http://www.w3.org/2000/svg"width="20" height="20" className="me-1 "  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-left-icon lucide-chevrons-left"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>
+        <button type="button" className="flex items-center" onClick={handlePrev}><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" className="me-1 " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-left-icon lucide-chevrons-left"><path d="m11 17-5-5 5-5" /><path d="m18 17-5-5 5-5" /></svg>
           Prev
         </button>
         <div className="month-label">
@@ -130,7 +141,7 @@ if (!consultantSettings) {
           })}
         </div>
         <button type="button" className="flex items-center" onClick={handleNext}>
-          Next<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" className="ms-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-right-icon lucide-chevrons-right"><path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/></svg>
+          Next<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" className="ms-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-right-icon lucide-chevrons-right"><path d="m6 17 5-5-5-5" /><path d="m13 17 5-5-5-5" /></svg>
         </button>
       </div>
       <div className="day-names">

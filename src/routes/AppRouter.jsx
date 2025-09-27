@@ -65,6 +65,8 @@ export default function AppRouter() {
 
             
           </Route>
+
+          <Route path="*" element={<Login />} />
         
         </Route>
         

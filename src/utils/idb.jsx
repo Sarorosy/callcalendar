@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
  useEffect(() => {
   const fetchUser = async () => {
-    const storedUser = await get("LoggedInUser");
+    const storedUser = await get("CallLoggedInUser");
     if (storedUser) {
       const now = moment().tz("Asia/Kolkata").valueOf();
       const twelveHours = moment.duration(12, "hours").asMilliseconds();
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
       if (now - storedUser.loginTime < twelveHours) {
         setUser(storedUser);
       } else {
-        await del("LoggedInUser"); 
+        await del("CallLoggedInUser"); 
         setUser(null);
       }
     }
@@ -37,12 +37,12 @@ const login = async (userData) => {
     loginTime: moment().tz("Asia/Kolkata").valueOf(), 
   };
   setUser(updatedUserData);
-  await set("LoggedInUser", updatedUserData);
+  await set("CallLoggedInUser", updatedUserData);
 };
 
   const logout = async () => {
     setUser(null);
-    await del("LoggedInUser");
+    await del("CallLoggedInUser");
   };
 
   const setFavourites = async (favourites) => {
@@ -51,7 +51,7 @@ const login = async (userData) => {
         ...prev,
         favMenus: favourites,
       };
-      set("LoggedInUser", updatedUser);
+      set("CallLoggedInUser", updatedUser);
       return updatedUser;
     });
   };
@@ -62,7 +62,7 @@ const login = async (userData) => {
       ...userArray, 
     };
     console.log("Updated User Array:", updatedUser);
-    set("LoggedInUser", updatedUser); 
+    set("CallLoggedInUser", updatedUser); 
     return updatedUser;
   });
 };

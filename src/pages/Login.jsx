@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/images/callcalendar-logo.png';
 import { toast } from 'react-hot-toast';
@@ -10,8 +10,15 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(()=>{
+    if(user && user?.id){
+      console.log("user found",user);
+      navigate("/")
+    }
+  },[user])
 
   const handleSubmit = async () => {
    
