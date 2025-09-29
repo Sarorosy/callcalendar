@@ -324,15 +324,15 @@ export default function ExternalCalls() {
       <!-- Three dropdowns or badges -->
 
         <div class="flex flex-col gap-1 mt-2">
-        ${(isSuperAdmin || (isSubAdmin && user.fld_permission.includes("Loop_Tagging")))
+        ${(isSuperAdmin || (isSubAdmin && user.fld_permission && user.fld_permission.includes("Loop_Tagging")))
             ? renderStatus("loopTagStatus", "Loop Tag", row.loopTagStatus)
             : ""}
         
-        ${(isSuperAdmin || (isSubAdmin && user.fld_permission.includes("Comment_Received")))
+        ${(isSuperAdmin || (isSubAdmin && user.fld_permission && user.fld_permission.includes("Comment_Received")))
             ? renderStatus("commentReceived", "Comment Received", row.commentReceived)
             : ""}
 
-        ${(isSuperAdmin || (isSubAdmin && user.fld_permission.includes("Quote_Shared")))
+        ${(isSuperAdmin || (isSubAdmin && user.fld_permission && user.fld_permission.includes("Quote_Shared")))
             ? renderStatus("quoteShared", "Quote Shared", row.quoteShared)
             : ""}
       </div>

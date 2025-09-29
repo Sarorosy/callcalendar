@@ -61,8 +61,7 @@ export default function Bookings() {
 
   const { bookingid } = useParams();
 
-  console.log("permissions", user.fld_permission)
-  console.log("permissions inlcude", user.fld_permission.includes("Loop_Tagging"))
+  
 
   ///socket ////////
 
