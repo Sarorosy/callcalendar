@@ -296,7 +296,7 @@ if (selectedDate.isSame(today, "day")) {
 // Postsales max time restriction
 if (bookingDetails.fld_sale_type === "Postsales") {
   const maxTime = moment.tz(selectedDate.format("YYYY-MM-DD") + " 17:00", "YYYY-MM-DD HH:mm", "Asia/Kolkata");
-
+console.log(maxTime)
   finalAvailableSlots = finalAvailableSlots.filter((slot) => {
     const [hourStr, minPart] = slot.split(":");
     const [minute, meridiem] = minPart.split(" ");
