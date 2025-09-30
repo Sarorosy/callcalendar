@@ -175,6 +175,7 @@ function Dashboard() {
 
       {/* {(user?.fld_admin_type === "SUBADMIN" || user?.fld_admin_type === "CONSULTANT") && <BlockSlot user={user} />} */}
 
+        {(user?.fld_admin_type === "SUPERADMIN") && <BlockSlot user={user} />}
 
       {user?.fld_admin_type === "SUPERADMIN" && (
         <div className="bg-white p-4 mt-5 rounded">

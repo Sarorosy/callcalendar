@@ -29,9 +29,11 @@ const CustomCalendar = ({ consultantSettings, onDateClick, selectedDateState }) 
   }
 
 
-  const allowedWeekDays = consultantSettings.fld_selected_week_days
-    .split(",")
-    .map((d) => parseInt(d));
+  const allowedWeekDays = (consultantSettings?.fld_selected_week_days || "")
+  .split(",")
+  .filter(Boolean) 
+  .map((d) => parseInt(d, 10));
+
 
   const getDaysInMonth = (month, year) => {
     return new Date(year, month + 1, 0).getDate();
