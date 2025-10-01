@@ -32,6 +32,36 @@ const Summary = () => {
     consultant_type: "ACTIVE",
   });
 
+  const today_y = new Date();
+  const startOfDay = (date) =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const quickSet = (type) => {
+    let from, to;
+
+    if (type === "yesterday") {
+      const y = new Date(today_y);
+      y.setDate(today_y.getDate() - 1);
+      from = startOfDay(y);
+      to = new Date(startOfDay(y).setHours(23, 59, 59, 999));
+    }
+
+    if (type === "7days") {
+      const past = new Date(today_y);
+      past.setDate(today_y.getDate() - 7);
+      from = startOfDay(past);
+      to = today_y;
+    }
+
+    if (type === "30days") {
+      const past = new Date(today_y);
+      past.setDate(today_y.getDate() - 30);
+      from = startOfDay(past);
+      to = today_y;
+    }
+
+    setFilters({ ...filters, date_range: [from, to] });
+  };
+
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -59,165 +89,165 @@ const Summary = () => {
   const [consultantType, setConsultantType] = useState("ACTIVE");
 
 
-// socket start///////
+  // socket start///////
 
-useEffect(() => {
-  const socket = getSocket();
-
-  
-  const getStateSetterByStatus = (callRequestStatus, callConfirmationStatus) => {
-    if (callRequestStatus === "Call Scheduled") {
-      return setCallScheduledData;
-    } else if (callRequestStatus === "Accept" && callConfirmationStatus === "Call Confirmation Pending at Client End") {
-      return setAcceptedPendingData;
-    } else if (callRequestStatus === "Consultant Assigned") {
-      return setAddedNotScheduledData;
-    } else if (callRequestStatus === "Accept" && callConfirmationStatus === "Call Confirmed by Client") {
-      return setAcceptedConfirmedData;
-    } else if (callRequestStatus === "Reject") {
-      return setConsultantRejectedData;
-    } else if (callRequestStatus === "Completed") {
-      return setCallCompletedData;
-    } else if (callRequestStatus === "Rescheduled") {
-      return setRescheduledCall;
-    } else if (callRequestStatus === "Reassign Request") {
-      return setReassignCallData;
-    } else if (callRequestStatus === "External") {
-      return setExternalCallData;
-    } else if (callRequestStatus === "Cancelled") {
-      return setCallCancelledData;
-    } else if (callRequestStatus === "Client did not join") {
-      return setClientNotJoinedData;
-    }
-    return null;
-  };
+  useEffect(() => {
+    const socket = getSocket();
 
 
-  const removeBookingFromAllStates = (bookingId) => {
-    const allSetters = [
-      setCallScheduledData,
-      setAcceptedPendingData,
-      setAddedNotScheduledData,
-      setAcceptedConfirmedData,
-      setConsultantRejectedData,
-      setCallCompletedData,
-      setRescheduledCall,
-      setReassignCallData,
-      setExternalCallData,
-      setCallCancelledData,
-      setClientNotJoinedData,
-    ];
-
-    allSetters.forEach(setter => {
-      setter(prev => {
-        const list = Array.isArray(prev) ? prev : [];
-        return list.filter(booking => booking.id !== bookingId);
-      });
-    });
-  };
-
-  const handleBookingAdded = (newBooking) => {
-    console.log("Socket Called - Booking Added");
-
-    const mappedBooking = {
-      ...newBooking,
-      client_name: newBooking.user_name,
-      client_email: newBooking.user_email,
-      client_phone: newBooking.user_phone,
+    const getStateSetterByStatus = (callRequestStatus, callConfirmationStatus) => {
+      if (callRequestStatus === "Call Scheduled") {
+        return setCallScheduledData;
+      } else if (callRequestStatus === "Accept" && callConfirmationStatus === "Call Confirmation Pending at Client End") {
+        return setAcceptedPendingData;
+      } else if (callRequestStatus === "Consultant Assigned") {
+        return setAddedNotScheduledData;
+      } else if (callRequestStatus === "Accept" && callConfirmationStatus === "Call Confirmed by Client") {
+        return setAcceptedConfirmedData;
+      } else if (callRequestStatus === "Reject") {
+        return setConsultantRejectedData;
+      } else if (callRequestStatus === "Completed") {
+        return setCallCompletedData;
+      } else if (callRequestStatus === "Rescheduled") {
+        return setRescheduledCall;
+      } else if (callRequestStatus === "Reassign Request") {
+        return setReassignCallData;
+      } else if (callRequestStatus === "External") {
+        return setExternalCallData;
+      } else if (callRequestStatus === "Cancelled") {
+        return setCallCancelledData;
+      } else if (callRequestStatus === "Client did not join") {
+        return setClientNotJoinedData;
+      }
+      return null;
     };
 
-    let canAdd = false;
 
-    // Your existing permission logic
-    if (user.fld_admin_type === "EXECUTIVE") {
-      canAdd = newBooking.fld_addedby == user.id;
-    } else if (user.fld_admin_type === "CONSULTANT") {
-      canAdd =
-        newBooking.fld_consultantid == user.id ||
-        newBooking.fld_secondary_consultant_id == user.id;
-    } else if (user.fld_admin_type === "SUBADMIN") {
-      const bookingTeams = Array.isArray(newBooking.fld_teamid)
-        ? newBooking.fld_teamid
-        : String(newBooking.fld_teamid)
+    const removeBookingFromAllStates = (bookingId) => {
+      const allSetters = [
+        setCallScheduledData,
+        setAcceptedPendingData,
+        setAddedNotScheduledData,
+        setAcceptedConfirmedData,
+        setConsultantRejectedData,
+        setCallCompletedData,
+        setRescheduledCall,
+        setReassignCallData,
+        setExternalCallData,
+        setCallCancelledData,
+        setClientNotJoinedData,
+      ];
+
+      allSetters.forEach(setter => {
+        setter(prev => {
+          const list = Array.isArray(prev) ? prev : [];
+          return list.filter(booking => booking.id !== bookingId);
+        });
+      });
+    };
+
+    const handleBookingAdded = (newBooking) => {
+      console.log("Socket Called - Booking Added");
+
+      const mappedBooking = {
+        ...newBooking,
+        client_name: newBooking.user_name,
+        client_email: newBooking.user_email,
+        client_phone: newBooking.user_phone,
+      };
+
+      let canAdd = false;
+
+      // Your existing permission logic
+      if (user.fld_admin_type === "EXECUTIVE") {
+        canAdd = newBooking.fld_addedby == user.id;
+      } else if (user.fld_admin_type === "CONSULTANT") {
+        canAdd =
+          newBooking.fld_consultantid == user.id ||
+          newBooking.fld_secondary_consultant_id == user.id;
+      } else if (user.fld_admin_type === "SUBADMIN") {
+        const bookingTeams = Array.isArray(newBooking.fld_teamid)
+          ? newBooking.fld_teamid
+          : String(newBooking.fld_teamid)
             .split(",")
             .map((id) => id.trim());
 
-      const userTeams = Array.isArray(user.fld_team_id)
-        ? user.fld_team_id
-        : String(user.fld_team_id)
+        const userTeams = Array.isArray(user.fld_team_id)
+          ? user.fld_team_id
+          : String(user.fld_team_id)
             .split(",")
             .map((id) => id.trim());
 
-      const hasTeamMatch = bookingTeams.some((teamId) =>
-        userTeams.includes(teamId)
-      );
+        const hasTeamMatch = bookingTeams.some((teamId) =>
+          userTeams.includes(teamId)
+        );
 
-      if (hasTeamMatch) {
+        if (hasTeamMatch) {
+          canAdd = true;
+        }
+      } else if (user.fld_admin_type === "SUPERADMIN") {
         canAdd = true;
       }
-    } else if (user.fld_admin_type === "SUPERADMIN") {
-      canAdd = true;
-    }
 
-    if (!canAdd) return;
+      if (!canAdd) return;
 
-    // Get the appropriate state setter based on status
-    const stateSetter = getStateSetterByStatus(
-      newBooking.fld_call_request_sts,
-      newBooking.fld_call_confirmation_status
-    );
+      // Get the appropriate state setter based on status
+      const stateSetter = getStateSetterByStatus(
+        newBooking.fld_call_request_sts,
+        newBooking.fld_call_confirmation_status
+      );
 
-    if (stateSetter) {
-      stateSetter(prev => {
-        const list = Array.isArray(prev) ? prev : [];
-        // Check if booking already exists
-        if (list.some(booking => booking.id == mappedBooking.id)) {
-          return list;
-        }
-        // Add new booking at the top
-        return [mappedBooking, ...list];
-      });
-    }
-  };
-
-  const handleBookingUpdated = (updatedBooking) => {
-    console.log("Socket Called - Booking Updated");
-    
-    const mappedBooking = {
-      ...updatedBooking,
-      client_name: updatedBooking.user_name,
-      client_email: updatedBooking.user_email,
-      client_phone: updatedBooking.user_phone,
+      if (stateSetter) {
+        stateSetter(prev => {
+          const list = Array.isArray(prev) ? prev : [];
+          // Check if booking already exists
+          if (list.some(booking => booking.id == mappedBooking.id)) {
+            return list;
+          }
+          // Add new booking at the top
+          return [mappedBooking, ...list];
+        });
+      }
     };
 
-    // First, remove the booking from all states
-    removeBookingFromAllStates(mappedBooking.id);
+    const handleBookingUpdated = (updatedBooking) => {
+      console.log("Socket Called - Booking Updated");
 
-    // Then add it to the correct state based on new status
-    const stateSetter = getStateSetterByStatus(
-      updatedBooking.fld_call_request_sts,
-      updatedBooking.fld_call_confirmation_status
-    );
+      const mappedBooking = {
+        ...updatedBooking,
+        client_name: updatedBooking.user_name,
+        client_email: updatedBooking.user_email,
+        client_phone: updatedBooking.user_phone,
+      };
 
-    if (stateSetter) {
-      stateSetter(prev => {
-        const list = Array.isArray(prev) ? prev : [];
-        // Add updated booking at the top
-        return [mappedBooking, ...list];
-      });
-    }
-  };
+      // First, remove the booking from all states
+      removeBookingFromAllStates(mappedBooking.id);
 
-  socket.on("bookingAdded", handleBookingAdded);
-  socket.on("bookingUpdated", handleBookingUpdated);
+      // Then add it to the correct state based on new status
+      const stateSetter = getStateSetterByStatus(
+        updatedBooking.fld_call_request_sts,
+        updatedBooking.fld_call_confirmation_status
+      );
 
-  return () => {
-    socket.off("bookingAdded", handleBookingAdded);
-    socket.off("bookingUpdated", handleBookingUpdated);
-  };
-}, [user.id, user.fld_admin_type, user.fld_team_id, user.fld_subadmin_type]);
+      if (stateSetter) {
+        stateSetter(prev => {
+          const list = Array.isArray(prev) ? prev : [];
+          // Add updated booking at the top
+          return [mappedBooking, ...list];
+        });
+      }
+    };
 
-//////socket end//////////
+    socket.on("bookingAdded", handleBookingAdded);
+    socket.on("bookingUpdated", handleBookingUpdated);
+
+    return () => {
+      socket.off("bookingAdded", handleBookingAdded);
+      socket.off("bookingUpdated", handleBookingUpdated);
+    };
+  }, [user.id, user.fld_admin_type, user.fld_team_id, user.fld_subadmin_type]);
+
+  //////socket end//////////
 
   const fetchConsultantsAndCrms = async () => {
     try {
@@ -275,8 +305,8 @@ useEffect(() => {
   const formatDate = (date) =>
     date
       ? `${date.getFullYear()}-${(date.getMonth() + 1)
-          .toString()
-          .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
+        .toString()
+        .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
       : null;
 
   const fetchData = async (
@@ -288,7 +318,7 @@ useEffect(() => {
     const payload = {
       userId: user.id,
       userType: user.fld_admin_type,
-      subadminType : user.fld_subadmin_type,
+      subadminType: user.fld_subadmin_type,
       assigned_team: user.fld_team_id,
       filters: {
         consultationStatus:
@@ -378,11 +408,11 @@ useEffect(() => {
 
   return (
     <div className="">
-      <SocketHandler otherSetters={[{ setFn: setConsultants, isBookingList: false,consultantType:consultantType },{ setFn: setFilteredConsultants, isBookingList: false,consultantType:consultantType },{ setFn: setCrms, isBookingList: false }]} />
+      <SocketHandler otherSetters={[{ setFn: setConsultants, isBookingList: false, consultantType: consultantType }, { setFn: setFilteredConsultants, isBookingList: false, consultantType: consultantType }, { setFn: setCrms, isBookingList: false }]} />
       <div className="mb-4 flex items-center gap-3 justify-between">
         <div className="flex justify-start items-center ">
           <h4 className="text-[16px] font-semibold text-gray-900">Call Summary</h4>
-          
+
         </div>
 
         <div className="flex gap-2 items-center">
@@ -439,10 +469,10 @@ useEffect(() => {
                   value={
                     filters.crm_id
                       ? {
-                          value: filters.crm_id,
-                          label: crms.find((c) => c.id === filters.crm_id)
-                            ?.fld_name,
-                        }
+                        value: filters.crm_id,
+                        label: crms.find((c) => c.id === filters.crm_id)
+                          ?.fld_name,
+                      }
                       : null
                   }
                   onChange={(opt) =>
@@ -485,11 +515,11 @@ useEffect(() => {
                   value={
                     filters.consultant_id
                       ? {
-                          value: filters.consultant_id,
-                          label: filteredConsultants.find(
-                            (c) => c.id === filters.consultant_id
-                          )?.fld_name,
-                        }
+                        value: filters.consultant_id,
+                        label: filteredConsultants.find(
+                          (c) => c.id === filters.consultant_id
+                        )?.fld_name,
+                      }
                       : null
                   }
                   onChange={(opt) =>
@@ -546,6 +576,26 @@ useEffect(() => {
                   isClearable
                   placeholderText="Select date range"
                 />
+                <div className="flex gap-2 mt-1">
+                  <button
+                    onClick={() => quickSet("yesterday")}
+                    className="px-2 py-0.5 f-11 bg-gray-100 rounded hover:bg-gray-200"
+                  >
+                    Yesterday
+                  </button>
+                  <button
+                    onClick={() => quickSet("7days")}
+                    className="px-2 py-0.5 f-11 bg-gray-100 rounded hover:bg-gray-200"
+                  >
+                    Last 7 Days
+                  </button>
+                  <button
+                    onClick={() => quickSet("30days")}
+                    className="px-2 py-0.5 f-11 bg-gray-100 rounded hover:bg-gray-200"
+                  >
+                    Last 30 Days
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -605,7 +655,7 @@ useEffect(() => {
               setConfirmationStatus={setConfirmationStatus}
               callStatus="Call Scheduled"
               CallconfirmationStatus=""
-              
+
             />
           )}
           {loading ? (

@@ -61,7 +61,7 @@ export default function Bookings() {
 
   const { bookingid } = useParams();
 
-  
+
 
   ///socket ////////
 
@@ -163,16 +163,16 @@ export default function Bookings() {
     };
 
     const handleMiniStatusUpdated = ({ bookingId, field, value }) => {
-    console.log("Socket Called - Mini Status Updated", bookingId, field, value);
+      console.log("Socket Called - Mini Status Updated", bookingId, field, value);
 
-    setBookings((prev) => {
-      return prev.map((booking) =>
-        booking.id === bookingId
-          ? { ...booking, [field]: value } // update only the specific field
-          : booking
-      );
-    });
-  };
+      setBookings((prev) => {
+        return prev.map((booking) =>
+          booking.id === bookingId
+            ? { ...booking, [field]: value } // update only the specific field
+            : booking
+        );
+      });
+    };
 
     socket.on("bookingAdded", handleBookingAdded);
     socket.on("bookingUpdated", handleBookingUpdated);
@@ -205,6 +205,9 @@ export default function Bookings() {
   const fromDate = dashboard_status ? today : lastWeek;
   const toDate = dashboard_status ? today : today;
 
+
+
+
   const [filters, setFilters] = useState({
     sale_type: "",
     call_rcrd_status: "",
@@ -213,6 +216,36 @@ export default function Bookings() {
     filter_type: "Booking",
     date_range: [fromDate, toDate],
   });
+
+  const today_y = new Date();
+  const startOfDay = (date) =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const quickSet = (type) => {
+    let from, to;
+
+    if (type === "yesterday") {
+      const y = new Date(today_y);
+      y.setDate(today_y.getDate() - 1);
+      from = startOfDay(y);
+      to = new Date(startOfDay(y).setHours(23, 59, 59, 999));
+    }
+
+    if (type === "7days") {
+      const past = new Date(today_y);
+      past.setDate(today_y.getDate() - 7);
+      from = startOfDay(past);
+      to = today_y;
+    }
+
+    if (type === "30days") {
+      const past = new Date(today_y);
+      past.setDate(today_y.getDate() - 30);
+      from = startOfDay(past);
+      to = today_y;
+    }
+
+    setFilters({ ...filters, date_range: [from, to] });
+  };
 
   const fetchConsultantsAndCrms = async () => {
     try {
@@ -575,7 +608,7 @@ export default function Bookings() {
   };
 
   const columns = [
-  
+
     {
       title: "Client",
       data: "client_name",
@@ -630,17 +663,17 @@ export default function Bookings() {
         <!-- Three dropdowns or badges -->
 
         <div class="flex flex-col gap-1 mt-2">
-        ${ (isSuperAdmin || (isSubAdmin && user.fld_permission && user.fld_permission.includes("Loop_Tagging")))
+        ${(isSuperAdmin || (isSubAdmin && user.fld_permission && user.fld_permission.includes("Loop_Tagging")))
             ? renderStatus("loopTagStatus", "Loop Tag", row.loopTagStatus)
-            : "" }
+            : ""}
         
-        ${ (isSuperAdmin || (isSubAdmin && user.fld_permission && user.fld_permission.includes("Comment_Received")))
+        ${(isSuperAdmin || (isSubAdmin && user.fld_permission && user.fld_permission.includes("Comment_Received")))
             ? renderStatus("commentReceived", "Comment Received", row.commentReceived)
-            : "" }
+            : ""}
 
-        ${ (isSuperAdmin || (isSubAdmin && user.fld_permission && user.fld_permission.includes("Quote_Shared")))
+        ${(isSuperAdmin || (isSubAdmin && user.fld_permission && user.fld_permission.includes("Quote_Shared")))
             ? renderStatus("quoteShared", "Quote Shared", row.quoteShared)
-            : "" }
+            : ""}
       </div>
 
       </div>
@@ -1222,6 +1255,26 @@ export default function Bookings() {
                         isClearable
                         placeholderText="Select date range"
                       />
+                      <div className="flex gap-2 mt-1">
+                        <button
+                          onClick={() => quickSet("yesterday")}
+                          className="px-2 py-0.5 f-11 bg-gray-100 rounded hover:bg-gray-200"
+                        >
+                          Yesterday
+                        </button>
+                        <button
+                          onClick={() => quickSet("7days")}
+                          className="px-2 py-0.5 f-11 bg-gray-100 rounded hover:bg-gray-200"
+                        >
+                          Last 7 Days
+                        </button>
+                        <button
+                          onClick={() => quickSet("30days")}
+                          className="px-2 py-0.5 f-11 bg-gray-100 rounded hover:bg-gray-200"
+                        >
+                          Last 30 Days
+                        </button>
+                      </div>
                     </div>
                   </div>
 

@@ -319,6 +319,11 @@ export default function Followers() {
       render: (data) => `<div class="text-gray-700">${data || ""}</div>`,
     },
     {
+      title: "Follower Consultant",
+      data: "follower_consultant_name",
+      render: (data) => `<div class="text-gray-700">${data || ""}</div>`,
+    },
+    {
       title: "Added On ",
       data: "addedon",
       render: (data, type, row) => {

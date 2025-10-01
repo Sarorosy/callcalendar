@@ -13,7 +13,7 @@ import { formatDate } from "../../helpers/CommonHelper.jsx";
 import API_URL from "../../utils/constants.jsx";
 
 const ScheduleCall = () => {
-  const {user}=useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [timezoneList, setTimezoneList] = useState(TimeZones);
   const [selectedTimezone, setSelectedTimezone] = useState("Asia/Kolkata");
@@ -33,16 +33,16 @@ const ScheduleCall = () => {
 
   const fetchBookingDetailsWithRc = async () => {
     try {
-    setBookingDetails(null);
-    setConsultantSettings(null);
-    setConsultantName("");
-    setAvailableSlots([]);
-    setSelectedSlot("");
-    setSelectedDate("");
-    setQuestionData({ count: 0, questions: "" });
-    setCallLink("");
-    setSubmitMessage("");
-    setError("");
+      setBookingDetails(null);
+      setConsultantSettings(null);
+      setConsultantName("");
+      setAvailableSlots([]);
+      setSelectedSlot("");
+      setSelectedDate("");
+      setQuestionData({ count: 0, questions: "" });
+      setCallLink("");
+      setSubmitMessage("");
+      setError("");
       const response = await fetch(
         `${API_URL}/api/helpers/getBookingDetailsWithRc?id=${bookingId}`
       );
@@ -76,7 +76,7 @@ const ScheduleCall = () => {
     const handleBookingConfirmed = (consultantId, date, slot) => {
       console.log("Socket Called - Booking Confirmed");
 
-     const selectedDateFormatted = selectedDate.tz("Asia/Kolkata").format("YYYY-MM-DD");
+      const selectedDateFormatted = selectedDate.tz("Asia/Kolkata").format("YYYY-MM-DD");
       const eventDateFormatted = moment.tz(date, "YYYY-MM-DD", "Asia/Kolkata").format("YYYY-MM-DD");
 
       if (bookingDetails?.fld_consultantid == consultantId) {
@@ -87,13 +87,13 @@ const ScheduleCall = () => {
       }
     };
 
-     const handleConsultantSlots = (data) => {
+    const handleConsultantSlots = (data) => {
       console.log("Socket Called - Slot Changed");
 
-    //  const selectedDateFormatted = selectedDate.tz("Asia/Kolkata").format("YYYY-MM-DD");
-    //   const eventDateFormatted = moment.tz(date, "YYYY-MM-DD", "Asia/Kolkata").format("YYYY-MM-DD");
- console.log("Incoming data:", data);
-  console.log(" bookingDetails.fld_consultantid:", bookingDetails.fld_consultantid);
+      //  const selectedDateFormatted = selectedDate.tz("Asia/Kolkata").format("YYYY-MM-DD");
+      //   const eventDateFormatted = moment.tz(date, "YYYY-MM-DD", "Asia/Kolkata").format("YYYY-MM-DD");
+      console.log("Incoming data:", data);
+      console.log(" bookingDetails.fld_consultantid:", bookingDetails.fld_consultantid);
       if (bookingDetails?.fld_consultantid == data.consultantid) {
         console.log(
           "Refreshing booking details due to matching bookingConfirmed event"
@@ -146,8 +146,8 @@ const ScheduleCall = () => {
       sat: "fld_sat_time_block",
     };
 
-   const normalizeTime = (time) =>
-  moment.tz(time, ["h:mm A"], "Asia/Kolkata").format("h:mm A");
+    const normalizeTime = (time) =>
+      moment.tz(time, ["h:mm A"], "Asia/Kolkata").format("h:mm A");
 
     const timeData = consultantSettings[dayFieldMap[dayKey]];
     const blockData = consultantSettings[blockFieldMap[dayKey]] || "";
@@ -170,17 +170,17 @@ const ScheduleCall = () => {
       const [endHour, endMinute] = end.split(":").map(Number);
 
       let current = moment.tz({ hour: startHour, minute: startMinute, second: 0, millisecond: 0 }, "Asia/Kolkata");
-let endTime = moment.tz({ hour: endHour, minute: endMinute, second: 0, millisecond: 0 }, "Asia/Kolkata");
+      let endTime = moment.tz({ hour: endHour, minute: endMinute, second: 0, millisecond: 0 }, "Asia/Kolkata");
 
-while (current <= endTime) {
-  const slot = current.format("h:mm A"); // formatted slot in IST
-  const normalizedSlot = normalizeTime(slot); // use your timezone-aware normalizeTime
-  if (!blockedSlots.includes(normalizedSlot)) {
-    generatedSlots.push(normalizedSlot);
-  }
+      while (current <= endTime) {
+        const slot = current.format("h:mm A"); // formatted slot in IST
+        const normalizedSlot = normalizeTime(slot); // use your timezone-aware normalizeTime
+        if (!blockedSlots.includes(normalizedSlot)) {
+          generatedSlots.push(normalizedSlot);
+        }
 
-  current = current.clone().add(30, "minutes"); // move to next slot
-}
+        current = current.clone().add(30, "minutes"); // move to next slot
+      }
     });
 
     try {
@@ -269,47 +269,47 @@ while (current <= endTime) {
         (slot) => !bookedSlots.includes(slot)
       );
 
-   const selectedDate = moment.tz(dateStr, "YYYY-MM-DD", "Asia/Kolkata");
-const today = moment.tz("Asia/Kolkata");
+      const selectedDate = moment.tz(dateStr, "YYYY-MM-DD", "Asia/Kolkata");
+      const today = moment.tz("Asia/Kolkata");
 
-// If the booking date is today
-if (selectedDate.isSame(today, "day")) {
-  const timeBufferMinutes = bookingDetails.fld_sale_type === "Postsales" ? 4 * 60 : 15;
-  
-  // minTime in Asia/Kolkata
-  const minTime = moment.tz("Asia/Kolkata").add(timeBufferMinutes, "minutes");
+      // If the booking date is today
+      if (selectedDate.isSame(today, "day")) {
+        const timeBufferMinutes = bookingDetails.fld_sale_type === "Postsales" ? 1 * 60 : 15;
 
-  finalAvailableSlots = finalAvailableSlots.filter((slot) => {
-    const [hourStr, minPart] = slot.split(":");
-    const [minute, meridiem] = minPart.split(" ");
-    let hour = parseInt(hourStr, 10);
-    if (meridiem === "PM" && hour !== 12) hour += 12;
-    if (meridiem === "AM" && hour === 12) hour = 0;
+        // minTime in Asia/Kolkata
+        const minTime = moment.tz("Asia/Kolkata").add(timeBufferMinutes, "minutes");
 
-    const slotMoment = moment.tz(selectedDate.format("YYYY-MM-DD"), "YYYY-MM-DD", "Asia/Kolkata")
-      .set({ hour, minute: parseInt(minute, 10), second: 0, millisecond: 0 });
+        finalAvailableSlots = finalAvailableSlots.filter((slot) => {
+          const [hourStr, minPart] = slot.split(":");
+          const [minute, meridiem] = minPart.split(" ");
+          let hour = parseInt(hourStr, 10);
+          if (meridiem === "PM" && hour !== 12) hour += 12;
+          if (meridiem === "AM" && hour === 12) hour = 0;
 
-    return slotMoment.isSameOrAfter(minTime);
-  });
-}
+          const slotMoment = moment.tz(selectedDate.format("YYYY-MM-DD"), "YYYY-MM-DD", "Asia/Kolkata")
+            .set({ hour, minute: parseInt(minute, 10), second: 0, millisecond: 0 });
 
-// Postsales max time restriction
-if (bookingDetails.fld_sale_type === "Postsales") {
-  const maxTime = moment.tz(selectedDate.format("YYYY-MM-DD") + " 17:00", "YYYY-MM-DD HH:mm", "Asia/Kolkata");
-console.log(maxTime)
-  finalAvailableSlots = finalAvailableSlots.filter((slot) => {
-    const [hourStr, minPart] = slot.split(":");
-    const [minute, meridiem] = minPart.split(" ");
-    let hour = parseInt(hourStr, 10);
-    if (meridiem === "PM" && hour !== 12) hour += 12;
-    if (meridiem === "AM" && hour === 12) hour = 0;
+          return slotMoment.isSameOrAfter(minTime);
+        });
+      }
 
-    const slotMoment = moment.tz(selectedDate.format("YYYY-MM-DD"), "YYYY-MM-DD", "Asia/Kolkata")
-      .set({ hour, minute: parseInt(minute, 10), second: 0, millisecond: 0 });
+      // Postsales max time restriction
+      if (bookingDetails.fld_sale_type === "Postsales") {
+        const maxTime = moment.tz(selectedDate.format("YYYY-MM-DD") + " 17:00", "YYYY-MM-DD HH:mm", "Asia/Kolkata");
+        console.log(maxTime)
+        finalAvailableSlots = finalAvailableSlots.filter((slot) => {
+          const [hourStr, minPart] = slot.split(":");
+          const [minute, meridiem] = minPart.split(" ");
+          let hour = parseInt(hourStr, 10);
+          if (meridiem === "PM" && hour !== 12) hour += 12;
+          if (meridiem === "AM" && hour === 12) hour = 0;
 
-    return slotMoment.isSameOrBefore(maxTime);
-  });
-}
+          const slotMoment = moment.tz(selectedDate.format("YYYY-MM-DD"), "YYYY-MM-DD", "Asia/Kolkata")
+            .set({ hour, minute: parseInt(minute, 10), second: 0, millisecond: 0 });
+
+          return slotMoment.isSameOrBefore(maxTime);
+        });
+      }
 
 
 
@@ -336,16 +336,16 @@ console.log(maxTime)
       toast.error("Please select a slot");
       return;
     }
-   if (!callLink) {
-  toast.error("Please enter link");
-  return;
-}
+    if (!callLink) {
+      toast.error("Please enter link");
+      return;
+    }
 
-const urlPattern = /^(https?:\/\/)[\w.-]+(\.[\w\.-]+)+[/#?]?.*$/;
-if (!urlPattern.test(callLink.trim())) {
-  toast.error("Please enter a valid URL starting with http:// or https://");
-  return;
-}
+    const urlPattern = /^(https?:\/\/)[\w.-]+(\.[\w\.-]+)+[/#?]?.*$/;
+    if (!urlPattern.test(callLink.trim())) {
+      toast.error("Please enter a valid URL starting with http:// or https://");
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -364,7 +364,7 @@ if (!urlPattern.test(callLink.trim())) {
             slot: selectedSlot,
             callLink,
             timezone: selectedTimezone,
-            user:user,
+            user: user,
           }),
         }
       );
@@ -378,7 +378,7 @@ if (!urlPattern.test(callLink.trim())) {
 
         setTimeout(() => {
           window.location.href = "https://callcalendar.rapidcollaborate.com/bookings";
-        }, 1500); 
+        }, 1500);
       } else {
         toast.error("Failed to submit booking.");
       }
@@ -420,8 +420,8 @@ if (!urlPattern.test(callLink.trim())) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Calendar */}
               <div className="md:col-span-2">
-                
-                {loading && !consultantSettings? (
+
+                {loading && !consultantSettings ? (
                   <CalendarLoader />
                 ) : (
                   <>
@@ -487,11 +487,10 @@ if (!urlPattern.test(callLink.trim())) {
                           key={i}
                           onClick={() => setSelectedSlot(slot)}
                           className={`cursor-pointer border border-gray-200 rounded-md text-center py-2 px-3 text-sm transition
-          ${
-            selectedSlot === slot
-              ? "bg-blue-600 text-white border-blue-600"
-              : "bg-gray-50 hover:bg-blue-100"
-          }`}
+          ${selectedSlot === slot
+                              ? "bg-blue-600 text-white border-blue-600"
+                              : "bg-gray-50 hover:bg-blue-100"
+                            }`}
                         >
                           {slot}
                         </div>
@@ -520,14 +519,14 @@ if (!urlPattern.test(callLink.trim())) {
                       />
                     </div>
                     <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={handleSubmit}
-                      disabled={isSubmitting}
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit"}
-                    </button>
+                      <button
+                        type="button"
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                      >
+                        {isSubmitting ? "Submitting..." : "Submit"}
+                      </button>
                     </div>
 
                     {submitMessage && (
