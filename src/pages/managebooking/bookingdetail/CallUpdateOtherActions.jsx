@@ -484,10 +484,11 @@ const CallUpdateOtherActions = ({
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               // Min = tomorrow in IST
-              min={moment.tz("Asia/Kolkata").add(1, "day").format("YYYY-MM-DD")}
+              // min={moment.tz("Asia/Kolkata").add(1, "day").format("YYYY-MM-DD")}
+              min={moment.tz("Asia/Kolkata").format("YYYY-MM-DD")}
               required
             />
-            <select
+            {/* <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={externalBookingTime}
               onChange={(e) => setExternalBookingTime(e.target.value)}
@@ -506,7 +507,49 @@ const CallUpdateOtherActions = ({
                   ) : null;
                 })
               )}
+            </select> */}
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value={externalBookingTime}
+              onChange={(e) => setExternalBookingTime(e.target.value)}
+              required
+            >
+              <option value="">Select Time</option>
+              {Array.from({ length: 24 }).flatMap((_, h) =>
+                [0, 30].map((m) => {
+                  const time = `${h.toString().padStart(2, "0")}:${m
+                    .toString()
+                    .padStart(2, "0")}`;
+
+                  // Slots allowed only between 09:00 and 19:00
+                  if (!(time >= "09:00" && time <= "19:00")) return null;
+
+                  // If selected date = today, filter out past slots
+                  if (externalBookingDate === moment.tz("Asia/Kolkata").format("YYYY-MM-DD")) {
+                    const now = moment.tz("Asia/Kolkata");
+
+                    // --- FIXED rounding ---
+                    const nextSlot = now.clone().startOf("hour");
+                    if (now.minutes() < 30) {
+                      nextSlot.minutes(30);
+                    } else {
+                      nextSlot.add(1, "hour").minutes(0);
+                    }
+
+                    const slotMoment = moment.tz(time, "HH:mm", "Asia/Kolkata");
+
+                    if (slotMoment.isBefore(nextSlot)) return null;
+                  }
+
+                  return (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  );
+                })
+              )}
             </select>
+
             <div className="flex items-end justify-end col-span-3">
               <button
                 type="button"
