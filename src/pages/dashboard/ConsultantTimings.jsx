@@ -27,6 +27,7 @@ function ConsultantTimings() {
     },
     timezone: "",
     exclusions: [],
+    exclusionDetails: [],
     saturdayOff: [],
   });
 
@@ -34,6 +35,7 @@ function ConsultantTimings() {
     type: "date",
     startDate: "",
     endDate: "",
+    detail: "full",
   });
 
   const weekDays = [
@@ -144,6 +146,17 @@ function ConsultantTimings() {
       ? settings.fld_days_exclusion.split("|~|").filter((exc) => exc !== "")
       : [];
 
+    // Parse exclusion details; align length with exclusions; default to 'full'
+    const exclusionDetailsRaw = settings.fld_days_exclusion_details
+      ? settings.fld_days_exclusion_details.split("|~|")
+      : [];
+    const exclusionDetails = exclusions.map((_, idx) => {
+      const value = exclusionDetailsRaw[idx];
+      return value === "first_half" || value === "second_half" || value === "full"
+        ? value
+        : "full";
+    });
+
     // Parse saturday off
     const saturdayOff = settings.fld_saturday_off
       ? settings.fld_saturday_off.split(",").map((week) => parseInt(week))
@@ -154,6 +167,7 @@ function ConsultantTimings() {
       timeData,
       timezone: settings.fld_timezone || "",
       exclusions,
+      exclusionDetails,
       saturdayOff,
     });
   };
@@ -213,15 +227,17 @@ function ConsultantTimings() {
     setFormData((prev) => ({
       ...prev,
       exclusions: [...prev.exclusions, exclusionText],
+      exclusionDetails: [...prev.exclusionDetails, tempExclusion.detail || "full"],
     }));
 
-    setTempExclusion({ type: "date", startDate: "", endDate: "" });
+    setTempExclusion({ type: "date", startDate: "", endDate: "", detail: "full" });
   };
 
   const removeExclusion = (index) => {
     setFormData((prev) => ({
       ...prev,
       exclusions: prev.exclusions.filter((_, i) => i !== index),
+      exclusionDetails: prev.exclusionDetails.filter((_, i) => i !== index),
     }));
   };
 
@@ -249,6 +265,7 @@ function ConsultantTimings() {
         timeData: {},
         timezone: formData.timezone,
         exclusions: formData.exclusions.join("|~|"),
+        exclusionDetails: (formData.exclusionDetails || []).map((d) => (d || "full")).join("|~|"),
         saturdayOff: formData.saturdayOff.join(","),
       };
 
@@ -503,9 +520,28 @@ function ConsultantTimings() {
                         key={index}
                         className="flex items-center justify-between p-2 bg-gray-50 rounded border border-gray-200"
                       >
-                        <span className="text-sm">
-                          {new Date(exclusion).toLocaleDateString("en-GB")}
-                        </span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm">
+                            {exclusion.includes(" to ")
+                              ? exclusion
+                              : new Date(exclusion).toLocaleDateString("en-GB")}
+                          </span>
+                          <select
+                            value={(formData.exclusionDetails && formData.exclusionDetails[index]) || "full"}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setFormData((prev) => ({
+                                ...prev,
+                                exclusionDetails: prev.exclusionDetails.map((d, i) => (i === index ? value : d)),
+                              }));
+                            }}
+                            className="px-2 py-1 border border-gray-300 rounded text-xs"
+                          >
+                            <option value="full">Full day</option>
+                            <option value="first_half">First half</option>
+                            <option value="second_half">Second half</option>
+                          </select>
+                        </div>
 
                         <button
                           type="button"
@@ -584,6 +620,17 @@ function ConsultantTimings() {
                         className="px-3 py-1 border border-gray-300 rounded w-[160px] text-[13px]"
                       />
                     )}
+                    <select
+                      value={tempExclusion.detail}
+                      onChange={(e) =>
+                        setTempExclusion((prev) => ({ ...prev, detail: e.target.value }))
+                      }
+                      className="px-2 py-1 border border-gray-300 rounded text-xs"
+                    >
+                      <option value="full">Full day</option>
+                      <option value="first_half">First half</option>
+                      <option value="second_half">Second half</option>
+                    </select>
                     <button
                       type="button"
                       onClick={handleExclusionAdd}

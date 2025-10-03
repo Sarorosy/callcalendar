@@ -146,8 +146,10 @@ const ScheduleCall = () => {
       sat: "fld_sat_time_block",
     };
 
-    const normalizeTime = (time) =>
-      moment.tz(time, ["h:mm A"], "Asia/Kolkata").format("h:mm A");
+    const normalizeTime = (time) => {
+      const m = moment.tz(time, ["h:mm A"], "Asia/Kolkata");
+      return m.isValid() ? m.format("h:mm A") : null;
+    };
 
     const timeData = consultantSettings[dayFieldMap[dayKey]];
     const blockData = consultantSettings[blockFieldMap[dayKey]] || "";
@@ -157,7 +159,9 @@ const ScheduleCall = () => {
     const blockedSlots = blockData
       .split("-")
       .map((s) => normalizeTime(s))
-      .filter((s) => s !== "");
+      .filter((s) => s && s !== "Invalid date");
+
+    // Half-day exclusions will be applied after slot generation
 
     const slotRanges = timeData.split("~");
     let generatedSlots = [];
@@ -182,6 +186,46 @@ const ScheduleCall = () => {
         current = current.clone().add(30, "minutes"); // move to next slot
       }
     });
+
+    // Apply half-day exclusions for the selected date (boundary at 2:00 PM IST)
+    try {
+      if (consultantSettings?.fld_days_exclusion) {
+        const excludedDates = consultantSettings.fld_days_exclusion
+          .split("|~|")
+          .map((d) => d.trim());
+        const details = (consultantSettings.fld_days_exclusion_details || "")
+          .split("|~|")
+          .map((d) => (d || "full").trim());
+
+        const idx = excludedDates.findIndex((d) => d === dateStr);
+        if (idx !== -1) {
+          const detail = details[idx] || "full";
+          if (detail === "first_half" || detail === "second_half") {
+            const boundaryMinutes = 14 * 60; // 2:00 PM
+
+            const toBlock = [];
+            generatedSlots.forEach((slot) => {
+              const [hourStr, minPart] = slot.split(":");
+              const [minute, meridiem] = (minPart || "").split(" ");
+              if (!minute || !meridiem) return;
+              let hour = parseInt(hourStr, 10);
+              if (meridiem === "PM" && hour !== 12) hour += 12;
+              if (meridiem === "AM" && hour === 12) hour = 0;
+              const minutes = hour * 60 + parseInt(minute, 10);
+              if (detail === "first_half" && minutes <= boundaryMinutes) toBlock.push(slot);
+              if (detail === "second_half" && minutes > boundaryMinutes) toBlock.push(slot);
+            });
+
+            toBlock.forEach((s) => {
+              const n = normalizeTime(s);
+              if (n && n !== "Invalid date" && !blockedSlots.includes(n)) blockedSlots.push(n);
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Error applying half-day exclusions:", e);
+    }
 
     try {
       const res1 = await fetch(
@@ -266,7 +310,7 @@ const ScheduleCall = () => {
       }
       bookedSlots.push("2:00 PM");
       let finalAvailableSlots = generatedSlots.filter(
-        (slot) => !bookedSlots.includes(slot)
+        (slot) => !bookedSlots.includes(slot) && !blockedSlots.includes(slot)
       );
 
       const selectedDate = moment.tz(dateStr, "YYYY-MM-DD", "Asia/Kolkata");

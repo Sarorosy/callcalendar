@@ -16,6 +16,7 @@ const CustomCalendar = ({ consultantSettings, onDateClick, selectedDateState }) 
   }
 
   let excludedDates = [];
+  let exclusionDetailsMap = {};
 
   try {
     if (consultantSettings?.fld_days_exclusion) {
@@ -23,9 +24,20 @@ const CustomCalendar = ({ consultantSettings, onDateClick, selectedDateState }) 
         .split("|~|")
         .map((d) => d.trim());
     }
+    if (consultantSettings?.fld_days_exclusion_details) {
+      const details = consultantSettings.fld_days_exclusion_details
+        .split("|~|")
+        .map((d) => d.trim());
+      exclusionDetailsMap = excludedDates.reduce((acc, date, idx) => {
+        const v = details[idx] || "full";
+        acc[date] = v === "first_half" || v === "second_half" || v === "full" ? v : "full";
+        return acc;
+      }, {});
+    }
   } catch (err) {
     console.error("Error parsing fld_days_exclusion:", err);
     excludedDates = [];
+    exclusionDetailsMap = {};
   }
 
 
@@ -73,7 +85,7 @@ const CustomCalendar = ({ consultantSettings, onDateClick, selectedDateState }) 
       )}-${String(d).padStart(2, "0")}`;
       const dateObj = new Date(currentYear, currentMonth, d);
       const dayOfWeek = dateObj.getDay(); // 0 = Sunday
-      const isExcluded = excludedDates.includes(dateStr);
+      const isExcluded = excludedDates.includes(dateStr) && (exclusionDetailsMap[dateStr] || "full") === "full";
       const isAllowedDay = allowedWeekDays.includes(dayOfWeek + 1);
 
       // Handle Saturday off logic
@@ -94,7 +106,7 @@ const CustomCalendar = ({ consultantSettings, onDateClick, selectedDateState }) 
         isExcluded || !isAllowedDay || isNthSaturdayOff || isPastDate;
       // const isDisabled = isExcluded || !isAllowedDay || isNthSaturdayOff;
 
-      if (isExcluded) classNames += " excluded";
+      if (excludedDates.includes(dateStr) && (exclusionDetailsMap[dateStr] || "full") === "full") classNames += " excluded";
       else if (!isAllowedDay || isNthSaturdayOff || isPastDate) classNames += " disabled";
       else if (dayOfWeek === 0) classNames += " sunday";
       if (
