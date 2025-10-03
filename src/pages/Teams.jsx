@@ -218,6 +218,31 @@ export default function Teams() {
       data: "fld_title",
     },
     {
+      title: "Members",
+      data: "users",
+      orderable: false,
+      render: function (users, type, row) {
+        const count = users?.length || 0;
+
+        // Build list items
+        const userList = users
+          .map((u) => `<li class="px-2 py-1 text-sm text-gray-700">${u.fld_name}</li>`)
+          .join("");
+
+        return `
+        <div class="accordion">
+          <button 
+            class="accordion-toggle text-blue-600 hover:underline text-sm"
+            data-id="${row.id}"
+          >
+            ${count} Member${count !== 1 ? "s" : ""}
+          </button>
+          <ul class="accordion-content hidden border rounded mt-2 bg-gray-50">${userList}</ul>
+        </div>
+      `;
+      },
+    },
+    {
       title: "Added On",
       data: "fld_addedon",
       orderable: false,
@@ -249,16 +274,25 @@ export default function Teams() {
   ];
 
   useEffect(() => {
+    // Handle edit button
     $(document).on("click", ".edit-btn", function () {
       const id = $(this).data("id");
       const selected = teams.find((d) => d.id === id);
       handleEdit(selected);
     });
 
+    // Accordion toggle
+    $(document).on("click", ".accordion-toggle", function () {
+      const content = $(this).closest(".accordion").find(".accordion-content");
+      content.toggleClass("hidden");
+    });
+
     return () => {
       $(document).off("click", ".edit-btn");
+      $(document).off("click", ".accordion-toggle");
     };
   }, [teams]);
+
 
   const tableOptions = {
     responsive: true,
