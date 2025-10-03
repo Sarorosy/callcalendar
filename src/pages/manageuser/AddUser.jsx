@@ -54,7 +54,6 @@ const AddUser = ({
       <div className="p-4 space-y-4 ">
     
           {(formType === "EXECUTIVE" ||
-            formType === "CONSULTANT" ||
             formType === "SUBADMIN") && (
             <div className="">
               <label className="block mb-1">Select Team</label>

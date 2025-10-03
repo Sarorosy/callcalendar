@@ -152,7 +152,7 @@ export default function Users() {
 
   const handleSave = async () => {
     // Validation
-     if (((formType === "SUBADMIN" || formType === "CONSULTANT" || formType === "EXECUTIVE"  ) &&
+     if (((formType === "SUBADMIN" || formType === "EXECUTIVE"  ) &&
               (!formData.team_id || formData.team_id.length === 0))) // empty array
          {
           toast.error("Please select Team.");
